@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}کمی صبر کن · Aegis Planner{% endblock %}
+{% block body_class %}auth{% endblock %}
+{% block head %}<script src="{% static 'js/prefs.js' %}"></script>
+<script defer src="{% static 'js/auth_i18n.js' %}"></script>{% endblock %}
+{% block body %}
+<main class="auth-wrap">
+  <div class="auth-card auth-card--center">
+    <div class="brand"><span class="brand__mark" aria-hidden="true"></span><span class="brand__name">Aegis Planner</span></div>
+    <p class="err-code" data-l="e429Code">۴۲۹</p>
+    <h1 class="auth-title" data-l="e429Title">کمی صبر کن</h1>
+    <p class="auth-sub" data-l="e429Sub">تلاش‌های زیادی از این دستگاه یا شبکه ثبت شد و برای امنیت، یک مکث کوتاه لازم است. یکی‌دو دقیقه دیگر دوباره امتحان کن — حساب و داده‌هایت دست‌نخورده است.</p>
+    <a href="{% url 'accounts:login' %}" class="btn btn--ghost" data-l="backToLogin">بازگشت به صفحه‌ی ورود</a>
+    <p class="auth-foot"><a href="{% url 'core:landing' %}" data-l="home">صفحه‌ی اصلی</a></p>
+  </div>
+</main>
+{% endblock %}

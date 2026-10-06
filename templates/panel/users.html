@@ -1,0 +1,57 @@
+{% extends "panel/base_panel.html" %}
+{% block ptitle %}کاربران{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <h2 class="panel__title" data-l="hAllUsers">همه‌ی کاربران</h2>
+  <form method="get" class="pnl-search">
+    <input type="search" name="q" value="{{ q }}" placeholder="جست‌وجوی نام کاربری…" data-l-ph="phUserSearch" dir="auto">
+    <button type="submit" class="btn btn--ghost btn--sm" data-l="btnSearch">جست‌وجو</button>
+    {% if q %}<a class="btn btn--ghost btn--sm" href="{% url 'panel:users' %}" data-l="btnClear">پاک‌کردن</a>{% endif %}
+  </form>
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head"><th data-l="thUsername">نام کاربری</th><th data-l="thJoined">ثبت‌نام</th><th data-l="thLastSeen">آخرین فعالیت</th><th>IP</th><th data-l="thStatus">وضعیت</th><th></th></tr>
+    {% for u in users %}
+    <tr>
+      <td class="pnl-user">{{ u.username }}</td>
+      <td class="pnl-dim">{{ u.date_joined|date:"Y/m/d" }}</td>
+      <td class="pnl-dim">{% if u.last_seen %}{{ u.last_seen|date:"Y/m/d H:i" }}{% else %}—{% endif %}</td>
+      <td class="pnl-dim" dir="ltr">{{ u.registered_ip|default:"—" }}</td>
+      <td>
+        {% if u.is_approved %}<span class="badge badge--exam" data-l="stApproved">تایید</span>{% else %}<span class="badge badge--today" data-l="stWaiting">در انتظار</span>{% endif %}
+        {% if u.is_staff %}<span class="badge" data-l="stAdmin">ادمین</span>{% endif %}
+        {% if not u.is_active %}<span class="badge badge--over" data-l="stInactive">غیرفعال</span>{% endif %}
+        {% if u.is_approved %}{% if u.premium_active %}<span class="badge badge--exam">{% if u.premium_days_left is not None %}{{ u.premium_days_left }} <span data-l="stDays">روز</span>{% else %}<span data-l="stUnlimited">نامحدود</span>{% endif %}</span>{% else %}<span class="badge badge--over" data-l="stExpiredSub">اشتراک تمام</span>{% endif %}{% endif %}
+      </td>
+      <td class="pnl-act">
+        {% if not u.is_approved %}
+        <form method="post" action="{% url 'panel:user_approve' u.pk %}">
+          {% csrf_token %}<button type="submit" class="btn btn--primary btn--sm" data-l="approve">تایید</button>
+        </form>
+        {% endif %}
+        {% if u.is_approved %}
+        <form method="post" action="{% url 'panel:user_extend' u.pk %}">
+          {% csrf_token %}<button type="submit" class="btn btn--ghost btn--sm" data-l="btnExtend">+۳۰ روز</button>
+        </form>
+        <form method="post" action="{% url 'panel:user_premium_adjust' u.pk %}" class="pnl-adjust">
+          {% csrf_token %}
+          <input type="number" name="days" min="-3650" max="3650" step="1" placeholder="±روز" data-l-ph="phDays" required>
+          <input type="text" name="reason" maxlength="200" placeholder="دلیل (اختیاری)" data-l-ph="phReason" dir="auto">
+          <button type="submit" class="btn btn--ghost btn--sm" data-l="btnApply">اعمال</button>
+        </form>
+        <a class="btn btn--ghost btn--sm" href="{% url 'panel:user_premium_log' u.pk %}" data-l="btnLog">تاریخچه</a>
+        {% endif %}
+        {% if u != request.user %}
+        <form method="post" action="{% url 'panel:user_toggle' u.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn--ghost btn--sm {% if u.is_active %}btn--danger{% endif %}" data-l="{% if u.is_active %}deactivate{% else %}activate{% endif %}">
+            {% if u.is_active %}غیرفعال کن{% else %}فعال کن{% endif %}
+          </button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table></div>
+</div>
+{% endblock %}

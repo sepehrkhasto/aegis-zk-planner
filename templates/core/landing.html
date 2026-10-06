@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Aegis Planner · فضای کاری خصوصیِ رمزنگاری‌شده{% endblock %}
+{% block body_class %}land lp{% endblock %}
+{% block robots %}{% if seo_index %}<meta name="robots" content="index, follow">{% else %}<meta name="robots" content="noindex, nofollow">{% endif %}{% endblock %}
+{% block meta %}
+  <meta name="description" content="کارهایت را از ذهنت بیرون بکش، بدون نگرانی از حریم خصوصی. فضایی امن و خلوت برای برنامه‌ها، یادداشت‌ها و تقویم شمسی‌ات — همه فقط برای چشم‌های خودت.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Aegis Planner">
+  <meta property="og:title" content="Aegis Planner — فضای کاری خصوصیِ رمزنگاری‌شده">
+  <meta property="og:description" content="کارهایت را از ذهنت بیرون بکش، بدون نگرانی از حریم خصوصی. داده‌هایت قبل از ذخیره قفل می‌شوند؛ هیچ‌کس جز خودت — حتی ما — نمی‌بیندشان.">
+  <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:url" content="{{ og_url }}">
+  <meta name="twitter:card" content="summary">
+{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/landing.css' %}">
+{% comment %}
+  v3.3: defer in the head = the browser STARTS downloading during HTML parse,
+  still executes after the DOM is ready — same behavior, earlier network start.
+  NOTE: this must be a {% templatetag openblock %} comment {% templatetag closeblock %}
+  block, not {# … #}. Django's hash comment is SINGLE-LINE only: a multi-line one
+  leaks its text into the rendered page (v3.3.1 bug).
+{% endcomment %}
+<script defer src="{% static 'js/langpref.js' %}"></script>
+<script defer src="{% static 'js/landing.js' %}"></script>{% endblock %}
+
+{% block body %}
+<svg width="0" height="0" class="svg-sprite" aria-hidden="true" focusable="false"><defs>
+  <symbol id="lf-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4"/></g></symbol>
+  <symbol id="lf-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/><rect x="7" y="12.5" width="3.5" height="3.5" rx=".8"/></g></symbol>
+  <symbol id="lf-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4.5"/><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/></g></symbol>
+  <symbol id="lf-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><path d="M7.5 15l3-3.5 3 2 4-5.5"/></g></symbol>
+  <symbol id="lf-target" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.3"/></g></symbol>
+  <symbol id="lf-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 2.5v5.5c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V5.5z"/><path d="M9 12l2 2 4-4"/></g></symbol>
+  <symbol id="lf-bolt" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M13 3L5 13.5h5.5L11 21l8-10.5h-5.5z"/></symbol>
+  <symbol id="lf-key" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="14" r="4.5"/><path d="M11.5 10.5L20 3M16 5l2.5 2.5M13.5 8l2 2"/></g></symbol>
+  <symbol id="lm-tasks" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M8.5 12l2.2 2.2L15.5 9.5"/></g></symbol>
+  <symbol id="lm-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/></g></symbol>
+  <symbol id="lm-kanban" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9 4.5v15M15 4.5v15"/></g></symbol>
+  <symbol id="lm-habits" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l4.5-5 3.5 3 7.5-8"/><path d="M15 7h4.5v4.5"/></g></symbol>
+  <symbol id="lm-journal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M8 20a3 3 0 0 1 0-6h11"/></g></symbol>
+  <symbol id="lm-notes" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="3"/><path d="M9 8.5h6M9 12.5h6M9 16.5h3"/></g></symbol>
+  <symbol id="lm-focus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 1.5M9.5 2.5h5"/></g></symbol>
+  <symbol id="lm-theme" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" fill-opacity=".25"/></g></symbol>
+</defs></svg>
+
+<div class="lp-bg" aria-hidden="true">
+  <div class="lp-aurora lp-aurora--1"></div>
+  <div class="lp-aurora lp-aurora--2"></div>
+  <div class="lp-aurora lp-aurora--3"></div>
+  <div class="lp-stars"></div>
+  <div class="lp-glow" id="lp-glow"></div>
+</div>
+
+<header class="lp-top" id="lp-top">
+  <div class="brand">
+    <img class="brand__logo" src="{% static 'img/logo.svg' %}" alt="" aria-hidden="true" width="26" height="26">
+    <span class="brand__name" data-l="brand">Aegis Planner</span>
+  </div>
+  <nav class="lp-top__nav">
+    <button type="button" id="lang-toggle" class="lp-btn lp-btn--ghost lp-btn--sm" aria-label="Switch language / تغییر زبان">EN</button>
+    <a href="{% url 'core:about' %}" class="lp-toplink" data-l="security">امنیت</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'vault:app' %}" class="lp-btn lp-btn--ghost lp-btn--sm" data-l="enterApp">ورود به اپ</a>
+    {% else %}
+    <a href="{% url 'accounts:login' %}" class="lp-btn lp-btn--ghost lp-btn--sm" data-l="login">ورود</a>
+    {% endif %}
+  </nav>
+</header>
+
+<main class="lp-main">
+
+  <!-- ============ HERO ============ -->
+  <section class="lp-hero">
+    <div class="lp-hero__copy lp-reveal">
+      {% comment %}
+        v7.1 — the hero, rewritten after a tester said the copy was "too
+        literary and too long".
+
+        What was here: a 40-word subhead, and four trust chips shown before
+        anyone knew what the product was. One of those chips advertised
+        "build your own theme", a feature removed in v6.4 — the page was
+        selling something that no longer existed.
+
+        The promise is now one sentence, because a claim this big is only
+        believed if it is short enough to read in one breath. The proof
+        (what the server actually stores) is further down, where someone who
+        wants it will look. No algorithm names up here: nobody chooses a
+        planner because of a cipher suite.
+      {% endcomment %}
+      <p class="lp-kicker"><span class="lp-kicker__dot"></span><span data-l="kicker">برنامه‌ریز شخصی · رمزشده</span></p>
+      <h1 class="lp-title" data-l="title">دفترچه‌ای که فقط خودت بازش می‌کنی.</h1>
+      <p class="lp-sub" data-l="sub">کارها، یادداشت‌ها و تقویمت — روی گوشی خودت رمز می‌شوند. ما نمی‌توانیم بخوانیمشان.</p>
+      <div class="lp-cta">
+        <a href="{% url 'accounts:register' %}" class="lp-btn lp-btn--primary lp-btn--lg" data-l="cta1">با کد دعوت شروع کن</a>
+        <a href="#buy" class="lp-btn lp-btn--ghost lp-btn--lg" data-l="cta2">تهیه‌ی اشتراک</a>
+      </div>
+      {% comment %} Two facts, not four claims. The theme chip is gone: it advertised a
+         feature removed in v6.4, and a page that sells what you no longer
+         ship is worse than a page that sells less. {% endcomment %}
+      <div class="lp-trust">
+        <span class="lp-chip"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lf-cal"/></svg><span data-l="trust2">شمسی و میلادی</span></span>
+        <span class="lp-chip"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lf-bolt"/></svg><span data-l="trust3">بدون سرویس خارجی</span></span>
+      </div>
+    </div>
+
+    <div class="lp-hero__art lp-reveal" id="lp-preview" aria-hidden="true">
+      <div class="lp-window">
+        <div class="lp-window__bar"><i></i><i></i><i></i><b data-l="pvTitle">تقویم · امروز</b></div>
+        <div class="lp-window__body">
+          <div class="lp-pv-side">
+            <span class="lp-pv-dot lp-pv-dot--a"></span><span class="lp-pv-line w60"></span>
+            <span class="lp-pv-dot lp-pv-dot--b"></span><span class="lp-pv-line w45"></span>
+            <span class="lp-pv-dot lp-pv-dot--c"></span><span class="lp-pv-line w70"></span>
+            <span class="lp-pv-dot lp-pv-dot--d"></span><span class="lp-pv-line w50"></span>
+          </div>
+          <div class="lp-pv-cal">
+            <div class="lp-pv-block lp-pv-block--1"><span data-l="pvT1">تمرکز عمیق</span></div>
+            <div class="lp-pv-block lp-pv-block--2"><span data-l="pvT2">جلسه‌ی تیم</span></div>
+            <div class="lp-pv-block lp-pv-block--3"><span data-l="pvT3">ورزش</span></div>
+            <div class="lp-pv-now"></div>
+          </div>
+        </div>
+        <div class="lp-window__lock"><svg viewBox="0 0 24 24"><use href="#lf-lock"/></svg><span data-l="pvLock">رمز شد</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS STRIP ============ -->
+  <section class="lp-stats lp-reveal">
+    <div class="lp-stat"><b>AES-256</b><span data-l="s1">رمزنگاری روی دستگاه خودت</span></div>
+    <div class="lp-stat"><b data-l="s2n">۰</b><span data-l="s2">داده‌ای که ما بتوانیم بخوانیم</span></div>
+    <div class="lp-stat"><b data-l="s3n">۲</b><span data-l="s3">تقویم شمسی و میلادی</span></div>
+    <div class="lp-stat"><b data-l="s4n">۵</b><span data-l="s4">نمای تقویم، از روز تا برنامه</span></div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="lp-sec">
+    <h2 class="lp-h2 lp-reveal" data-l="featH">دیگر بین ده اپِ مختلف سردرگم نشو</h2>
+    <p class="lp-h2sub lp-reveal" data-l="featSub">تقویم شمسی، کارهای روزمره و یادداشت‌هایت کنار هم — همه در یک جا، همه فقط مال خودت.</p>
+    <div class="lp-grid">
+      <div class="lp-card lp-reveal"><div class="lp-card__ic"><svg viewBox="0 0 24 24"><use href="#lf-lock"/></svg></div><h3 data-l="f1t">رمزنگاری روی دستگاه تو</h3><p data-l="f1b">هر چیزی که می‌نویسی، قبل از اینکه از دستگاهت خارج شود قفل می‌شود. هیچ‌کس جز خودت — حتی ما — نمی‌تواند آن را بخواند.</p></div>
+      <div class="lp-card lp-reveal"><div class="lp-card__ic"><svg viewBox="0 0 24 24"><use href="#lf-cal"/></svg></div><h3 data-l="f2t">تقویمی که مثل تو فکر می‌کند</h3><p data-l="f2b">نمای روز/هفته/۳روزه/ماه، شمسی یا میلادی — انتخاب با تو. تسک‌ها را بکش، اندازه بده و جابه‌جا کن؛ درست مثل یک تقویم حرفه‌ای.</p></div>
+      <div class="lp-card lp-reveal"><div class="lp-card__ic"><svg viewBox="0 0 24 24"><use href="#lf-check"/></svg></div><h3 data-l="f3t">از فکر تا انجام</h3><p data-l="f3b">تسک با دسته، اولویت، سررسید و تکرار. برد کانبان، افزودن سریع فارسی («فردا ساعت ۱۰ جلسه»)، و رویداد جدا از تسک.</p></div>
+      <div class="lp-card lp-reveal"><div class="lp-card__ic"><svg viewBox="0 0 24 24"><use href="#lf-chart"/></svg></div><h3 data-l="f4t">پیشرفتِ واقعی، نه توهم</h3><p data-l="f4b">عادت‌ها با هدف هفتگی، و گزارش‌هایی که می‌گویند کارهایت چند روز معطل می‌مانند و در چه حالی بهتر کار می‌کنی — نه فقط چندتا تیک خورد.</p></div>
+      <div class="lp-card lp-reveal"><div class="lp-card__ic"><svg viewBox="0 0 24 24"><use href="#lf-target"/></svg></div><h3 data-l="f5t">هدف‌ها را به سرانجام برسان</h3><p data-l="f5b">هدف ماه/سال/بلندمدت با مایل‌استون و رودمپ. تسک‌ها را به هدف وصل کن و لحظه‌ی «رسیدم» را جشن بگیر.</p></div>
+      <div class="lp-card lp-reveal"><div class="lp-card__ic"><svg viewBox="0 0 24 24"><use href="#lf-shield"/></svg></div><h3 data-l="f6t">کنترل کامل، دست خودت</h3><p data-l="f6b">پشتیبان رمزشده بگیر، هر جا نگه دار، هر زمان برگردان. داده‌ات مال توست — واقعاً مال تو.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="lp-sec lp-how">
+    <h2 class="lp-h2 lp-reveal" data-l="howH">چرا نوشته‌هایت واقعاً «خصوصی» می‌مانند</h2>
+    <p class="lp-h2sub lp-reveal" data-l="howSub">رمز حساب بانکی، ایده‌های کاری یا خاطرات روزانه‌ات را با خیال راحت بنویس — حتی خود ما هم امکان دیدنشان را نداریم. این‌طوری:</p>
+    <div class="lp-steps">
+      <div class="lp-step lp-reveal"><span class="lp-step__n" data-l="n1">۱</span><div class="lp-step__ic"><svg viewBox="0 0 24 24"><use href="#lf-key"/></svg></div><h3 data-l="h1t">کلید از رمز تو ساخته می‌شود</h3><p data-l="h1b">مسترپسوردت داخل مرورگر خودت به یک کلید رمزنگاری تبدیل می‌شود — و همان‌جا می‌ماند.</p></div>
+      <div class="lp-step lp-reveal"><span class="lp-step__n" data-l="n2">۲</span><div class="lp-step__ic"><svg viewBox="0 0 24 24"><use href="#lf-lock"/></svg></div><h3 data-l="h2t">داده قبل از ارسال قفل می‌شود</h3><p data-l="h2b">هر تسک و یادداشت با AES-256-GCM روی دستگاه خودت رمز می‌شود؛ سرور فقط یک بسته‌ی درهم می‌بیند.</p></div>
+      <div class="lp-step lp-reveal"><span class="lp-step__n" data-l="n3">۳</span><div class="lp-step__ic"><svg viewBox="0 0 24 24"><use href="#lf-bolt"/></svg></div><h3 data-l="h3t">فقط تو بازش می‌کنی</h3><p data-l="h3b">در هر دستگاهی با مسترپسوردت باز می‌شود. رمزت را فراموش کردی؟ با «کلید بازیابی» که خودت ساخته‌ای پسورد جدید می‌گذاری — بدون اینکه ما حتی یک کلمه از داده‌ات را ببینیم. امنیت واقعی همین است.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ PROOF (v3.2) — the claim, made visible ============ -->
+  <section class="lp-sec lp-proof">
+    <h2 class="lp-h2 lp-reveal" data-l="prH">حرف نمی‌زنیم؛ نشان می‌دهیم</h2>
+    <p class="lp-h2sub lp-reveal" data-l="prS">این همان داده است — یک‌بار از چشم تو، یک‌بار از چشم سرور ما.</p>
+    <div class="lp-proof__wrap lp-reveal">
+      <div class="lp-proof__pane">
+        <div class="lp-proof__head lp-proof__head--you"><svg viewBox="0 0 24 24"><use href="#lf-check"/></svg><span data-l="prYou">آن‌چه تو می‌بینی</span></div>
+        <div class="lp-proof__rows">
+          <div class="lp-proof__row"><i class="lp-pv-dot lp-pv-dot--a"></i><span data-l="prR1">جلسه‌ی تیم — ۱۰:۰۰</span></div>
+          <div class="lp-proof__row"><i class="lp-pv-dot lp-pv-dot--d"></i><span data-l="prR2">خرید هفتگی</span></div>
+          <div class="lp-proof__row"><i class="lp-pv-dot lp-pv-dot--c"></i><span data-l="prR3">رمز حساب بانکی</span></div>
+        </div>
+      </div>
+      <div class="lp-proof__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#lf-lock"/></svg><span data-l="prAes">AES-256-GCM</span></div>
+      <div class="lp-proof__pane lp-proof__pane--srv">
+        <div class="lp-proof__head lp-proof__head--srv"><svg viewBox="0 0 24 24"><use href="#lf-shield"/></svg><span data-l="prSrv">آن‌چه سرور ما می‌بیند</span></div>
+        <div class="lp-proof__rows" id="lp-cipher" aria-hidden="true">
+          <div class="lp-proof__row"><i class="lp-pv-dot lp-pv-dot--x"></i><code class="lp-cipher">nX92hQ7c…Uv41PfLm0KzT8wRd</code></div>
+          <div class="lp-proof__row"><i class="lp-pv-dot lp-pv-dot--x"></i><code class="lp-cipher">A5tJre3B…kY0MqW7xnCf2ZsHb</code></div>
+          <div class="lp-proof__row"><i class="lp-pv-dot lp-pv-dot--x"></i><code class="lp-cipher">Qw8pDz1N…c6VuEoL4yTgS3mAj</code></div>
+        </div>
+      </div>
+    </div>
+    <p class="lp-proof__cap lp-reveal" data-l="prCap">این نمایش است، ولی معماری همین است: متن خام هرگز به سرور نمی‌رسد — چیزی که وجود ندارد، لو هم نمی‌رود.</p>
+  </section>
+
+  <!-- ============ LIVE SHOWCASE — the app demos itself ============ -->
+  <section class="lp-sec lp-show">
+    <h2 class="lp-h2 lp-reveal" data-l="showH">ببین چطور کار می‌کند</h2>
+    <p class="lp-h2sub lp-reveal" data-l="showSub">هیچ اسکرین‌شاتی در کار نیست — این‌ها خودِ قابلیت‌ها هستند، زنده.</p>
+
+    <div class="lp-show__wrap lp-reveal">
+      <div class="lp-show__tabs" role="tablist" aria-label="نمایش قابلیت‌ها">
+        <button type="button" class="lp-show__tab active" data-demo="tasks" role="tab" id="lp-tab-tasks" aria-selected="true">
+          <svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-tasks"/></svg><span data-l="d1">تسک‌ها</span>
+        </button>
+        <button type="button" class="lp-show__tab" data-demo="kanban" role="tab" id="lp-tab-kanban" aria-selected="false" tabindex="-1">
+          <svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-kanban"/></svg><span data-l="d2">کانبان</span>
+        </button>
+        <button type="button" class="lp-show__tab" data-demo="habits" role="tab" id="lp-tab-habits" aria-selected="false" tabindex="-1">
+          <svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-habits"/></svg><span data-l="d3">عادت‌ها</span>
+        </button>
+        <button type="button" class="lp-show__tab" data-demo="focus" role="tab" id="lp-tab-focus" aria-selected="false" tabindex="-1">
+          <svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-focus"/></svg><span data-l="d4">تمرکز</span>
+        </button>
+        <button type="button" class="lp-show__tab" data-demo="themes" role="tab" id="lp-tab-themes" aria-selected="false" tabindex="-1">
+          <svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-theme"/></svg><span data-l="d5">تم شخصی</span>
+        </button>
+      </div>
+
+      <div class="lp-show__stage">
+        <!-- TASKS: rows check themselves off, one by one -->
+        <div class="lp-demo lp-demo--tasks active" data-demo="tasks" role="tabpanel" aria-labelledby="lp-tab-tasks">
+          <div class="lp-dt-row"><span class="lp-dt-box"></span><span class="lp-dt-t" data-l="dt1">ریویوی طراحی محصول</span><span class="lp-dt-b lp-dt-b--high" data-l="dtHigh">فوری</span></div>
+          <div class="lp-dt-row"><span class="lp-dt-box"></span><span class="lp-dt-t" data-l="dt2">تمرین زبان — ۳۰ دقیقه</span><span class="lp-dt-b" data-l="dtToday">امروز</span></div>
+          <div class="lp-dt-row"><span class="lp-dt-box"></span><span class="lp-dt-t" data-l="dt3">تماس با تیم فروش</span><span class="lp-dt-b" data-l="dtWork">کاری</span></div>
+          <div class="lp-dt-row"><span class="lp-dt-box"></span><span class="lp-dt-t" data-l="dt4">خرید هفتگی</span><span class="lp-dt-b" data-l="dtHome">خانه</span></div>
+        </div>
+
+        <!-- KANBAN: a card glides from one column to the next -->
+        <div class="lp-demo lp-demo--kanban" data-demo="kanban" role="tabpanel" aria-labelledby="lp-tab-kanban">
+          <div class="lp-kb-col"><span class="lp-kb-h" data-l="dk1">برای انجام</span><span class="lp-kb-card lp-kb-card--a"></span><span class="lp-kb-card lp-kb-card--b"></span></div>
+          <div class="lp-kb-col"><span class="lp-kb-h" data-l="dk2">در حال انجام</span><span class="lp-kb-card lp-kb-card--fly"></span></div>
+          <div class="lp-kb-col"><span class="lp-kb-h" data-l="dk3">انجام‌شده</span><span class="lp-kb-card lp-kb-card--c"></span></div>
+        </div>
+
+        <!-- HABITS: the heatmap fills in and the streak lights up -->
+        <div class="lp-demo lp-demo--habits" data-demo="habits" role="tabpanel" aria-labelledby="lp-tab-habits">
+          <div class="lp-hb-head"><span data-l="dh1">ورزش صبحگاهی</span><span class="lp-hb-streak"><svg class="lp-flame" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 3.5c1 2.6 4.5 4.6 4.5 8.5a4.5 4.5 0 0 1-9 0c0-1.9.9-3.4 2-4.5.2 1.2.9 2 1.9 2.3-.7-2 .1-4.4.6-6.3z"/></svg> <b class="lp-hb-n" data-l="dhN">۲۱</b></span></div>
+          <div class="lp-hb-map"></div>
+          <div class="lp-hb-bar"><i></i></div>
+        </div>
+
+        <!-- FOCUS: the zen ring, breathing -->
+        <div class="lp-demo lp-demo--focus" data-demo="focus" role="tabpanel" aria-labelledby="lp-tab-focus">
+          <div class="lp-fz">
+            <svg class="lp-fz__arc" viewBox="0 0 200 200">
+              <circle class="lp-fz__track" cx="100" cy="100" r="86"/>
+              <circle class="lp-fz__prog" cx="100" cy="100" r="86"/>
+            </svg>
+            <span class="lp-fz__breath"></span>
+            <span class="lp-fz__time" data-l="dfT">۲۵:۰۰</span>
+          </div>
+          <p class="lp-fz__cap" data-l="df1">حلقه با تو نفس می‌کشد</p>
+        </div>
+
+        <!-- THEMES: the whole mock re-paints itself, over and over -->
+        <div class="lp-demo lp-demo--themes" data-demo="themes" role="tabpanel" aria-labelledby="lp-tab-themes">
+          <div class="lp-th-mock">
+            <span class="lp-th-bar"></span>
+            <span class="lp-th-line w70"></span>
+            <span class="lp-th-line w45"></span>
+            <span class="lp-th-btn"></span>
+          </div>
+          <div class="lp-th-dots">
+            <i class="lp-tdot lp-tdot--1"></i><i class="lp-tdot lp-tdot--2"></i><i class="lp-tdot lp-tdot--3"></i>
+            <i class="lp-tdot lp-tdot--4"></i><i class="lp-tdot lp-tdot--5"></i><i class="lp-tdot lp-tdot--6"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MODULES BAND ============ -->
+  <section class="lp-sec lp-band lp-reveal">
+    <h2 class="lp-h2" data-l="bandH">هر چیزی که یادت می‌رود، یک جا جمع می‌شود</h2>
+    <div class="lp-band__chips">
+      <span class="lp-chip lp-chip--big"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-tasks"/></svg><span data-l="m1">تسک‌ها</span></span>
+      <span class="lp-chip lp-chip--big"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-calendar"/></svg><span data-l="m2">تقویم</span></span>
+      <span class="lp-chip lp-chip--big"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-kanban"/></svg><span data-l="m3">کانبان</span></span>
+      <span class="lp-chip lp-chip--big"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-habits"/></svg><span data-l="m4">عادت‌ها</span></span>
+      <span class="lp-chip lp-chip--big"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lf-target"/></svg><span data-l="m5">هدف‌ها</span></span>
+      <span class="lp-chip lp-chip--big"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-notes"/></svg><span data-l="m7">یادداشت</span></span>
+      <span class="lp-chip lp-chip--big"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lm-focus"/></svg><span data-l="m9">تمرکز</span></span>
+      <span class="lp-chip lp-chip--big"><svg class="lp-chip__ic" viewBox="0 0 24 24"><use href="#lf-chart"/></svg><span data-l="m10">گزارش‌ها</span></span>
+    </div>
+    <div class="lp-themes">
+      <span class="lp-themes__lb" data-l="themesLb">تم را خودت می‌سازی — شش رنگ، هر کدام دست خودت:</span>
+      <span class="lp-tdot lp-tdot--1"></span><span class="lp-tdot lp-tdot--2"></span><span class="lp-tdot lp-tdot--3"></span><span class="lp-tdot lp-tdot--4"></span><span class="lp-tdot lp-tdot--5"></span><span class="lp-tdot lp-tdot--6"></span><span class="lp-tdot lp-tdot--7"></span><span class="lp-tdot lp-tdot--more" data-l="tmore">هر رنگی</span>
+    </div>
+  </section>
+
+  <!-- ============ COMPARE (v3.2) — a fair question, answered plainly ============ -->
+  <section class="lp-sec lp-cmp">
+    <h2 class="lp-h2 lp-reveal" data-l="cmpH">چه کسی می‌تواند برنامه‌ات را بخواند؟</h2>
+    <p class="lp-h2sub lp-reveal" data-l="cmpS">مقایسه‌ی منصفانه، بدون اسم بردن از کسی.</p>
+    <div class="lp-cmp__scroll lp-reveal">
+      <table class="lp-cmp__table">
+        <thead>
+          <tr>
+            <th scope="col" class="lp-cmp__aspect"><span class="visually-hidden" data-l="cmpAspect">جنبه</span></th>
+            <th scope="col" class="lp-cmp__aegis"><svg class="lp-chip__ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#lf-shield"/></svg> Aegis</th>
+            <th scope="col" data-l="cmpCloud">اپ‌های ابری معمول</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" data-l="cmpQ1">متن تسک‌ها و یادداشت‌ها روی سرور</th>
+            <td class="lp-cmp__good"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#lf-lock"/></svg><span data-l="cmpA1">رمزشده روی دستگاه تو — سرور فقط ciphertext دارد</span></td>
+            <td class="lp-cmp__bad"><span data-l="cmpB1">معمولاً برای سرویس قابل‌خواندن است</span></td>
+          </tr>
+          <tr>
+            <th scope="row" data-l="cmpQ2">اگر سرور هک شود</th>
+            <td class="lp-cmp__good"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#lf-shield"/></svg><span data-l="cmpA2">مهاجم فقط بایت‌های درهم می‌بیند</span></td>
+            <td class="lp-cmp__bad"><span data-l="cmpB2">داده‌ی خام در معرض خطر است</span></td>
+          </tr>
+          <tr>
+            <th scope="row" data-l="cmpQ3">بازیابی رمز فراموش‌شده</th>
+            <td class="lp-cmp__good"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#lf-key"/></svg><span data-l="cmpA3">با کلید بازیابیِ خودت — بدون این‌که ما چیزی ببینیم</span></td>
+            <td class="lp-cmp__bad"><span data-l="cmpB3">ریست توسط سرویس، چون به داده دسترسی دارد</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ BUY (v1.18, فاز H مورد ۴۴) ============ -->
+  <section class="lp-sec lp-buy lp-reveal" id="buy">
+    <h2 class="lp-h2" data-l="buyH">تهیه‌ی اشتراک</h2>
+    <p class="lp-h2sub" data-l="buyS2">یک پیام در تلگرام کافی است — هماهنگی و کد دعوت همان‌جا انجام می‌شود.</p>
+    {% comment %}
+      v3.4.2 — the "leave your name and phone" form is gone. Every purchase
+      conversation already happened in Telegram anyway, so the form only
+      added a second, slower path AND asked visitors of a privacy product to
+      hand over a phone number before they had any reason to trust us.
+      One clear action beats a form plus a hint pointing elsewhere.
+    {% endcomment %}
+    {% if purchase_telegram %}
+    <a class="lp-tgcard" href="https://t.me/{{ purchase_telegram|cut:'@' }}"
+       target="_blank" rel="noopener noreferrer">
+      <span class="lp-tgcard__ic" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M21.7 4.3 2.9 11.5c-.9.3-.9 1.6 0 1.9l4.6 1.5 1.8 5.4c.3.8 1.3 1 1.9.4l2.5-2.5 4.7 3.5c.7.5 1.7.1 1.9-.7l3-15c.2-.9-.7-1.6-1.6-1.7zM9.6 14.4l9.1-6.1-7.6 7.4-.3 3.1-1.2-4.4z"/></svg>
+      </span>
+      <span class="lp-tgcard__txt">
+        <b data-l="buyTgCta">پیام در تلگرام</b>
+        <span class="lp-tgcard__id" dir="ltr">{{ purchase_telegram }}</span>
+      </span>
+      <span class="lp-tgcard__go" aria-hidden="true">›</span>
+    </a>
+    {% endif %}
+    <p class="lp-buyhint" data-l="buyInvite">دسترسی دعوت‌محور است و بعد از هماهنگی، حسابت با تایید ادمین فعال می‌شود.</p>
+  </section>
+
+  <!-- ============ FAQ (v3.2) — the objections, answered before they're asked ============ -->
+  <section class="lp-sec lp-faq" id="faq">
+    <h2 class="lp-h2 lp-reveal" data-l="faqH">سوال‌هایی که همه می‌پرسند</h2>
+    <div class="lp-faq__list lp-reveal">
+      <details class="lp-faq__item">
+        <summary><span data-l="q1">کد دعوت از کجا بیاورم؟</span><svg class="lp-faq__chev" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p data-l="a1">از همین صفحه درخواست بده یا در تلگرام پیام بده؛ بعد از هماهنگی، کد دعوت می‌گیری و حسابت با تایید ادمین فعال می‌شود. جمع کوچک می‌ماند تا کیفیت بالا بماند.</p>
+      </details>
+      <details class="lp-faq__item">
+        <summary><span data-l="q2">اگر مسترپسوردم را فراموش کنم چه؟</span><svg class="lp-faq__chev" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p data-l="a2">با «کلید بازیابی» که هنگام ساخت حساب خودت ذخیره کرده‌ای، رمز جدید می‌گذاری. بدون آن هیچ‌کس — حتی ما — نمی‌تواند داده را برگرداند؛ این هزینه‌ی امنیت واقعی است، پس کلید بازیابی را جای امن نگه دار.</p>
+      </details>
+      <details class="lp-faq__item">
+        <summary><span data-l="q3">دقیقاً چه چیزی روی سرور ذخیره می‌شود؟</span><svg class="lp-faq__chev" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p data-l="a3">فقط بسته‌ی رمزشده (ciphertext) به‌علاوه‌ی مشخصات حساب مثل نام کاربری. متن تسک‌ها و یادداشت‌هایت هرگز به شکل خام به سرور نمی‌رسد.</p>
+      </details>
+      <details class="lp-faq__item">
+        <summary><span data-l="q4">آفلاین هم کار می‌کند؟</span><svg class="lp-faq__chev" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p data-l="a4">بله. اپ یک PWA است: بعد از اولین ورود آنلاین، روی گوشی یا دسکتاپ نصب می‌شود، آفلاین باز می‌شود و تغییراتت صف می‌شوند تا با وصل‌شدن اینترنت همگام شوند.</p>
+      </details>
+      <details class="lp-faq__item">
+        <summary><span data-l="q5">تقویم شمسی دارد؟ فارسی چطور؟</span><svg class="lp-faq__chev" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p data-l="a5">بله؛ تقویم شمسی و میلادی هر دو، با نمای روز/۳روزه/هفته/ماه/برنامه. کل رابط دوزبانه‌ی فارسی/انگلیسی است و راست‌به‌چپ و چپ‌به‌راست هر دو درست چیده می‌شوند.</p>
+      </details>
+      <details class="lp-faq__item">
+        <summary><span data-l="q6">می‌توانم از داده‌ام خروجی بگیرم؟</span><svg class="lp-faq__chev" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p data-l="a6">بله. هر وقت بخواهی پشتیبان رمزشده می‌گیری، هر جا خواستی نگه می‌داری و هر زمان برمی‌گردانی. داده مال توست — بدون قفل‌شدن به ما.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="lp-final lp-reveal">
+    <h2 class="lp-final__t" data-l="finalH">فضای خودت را بردار.</h2>
+    <p class="lp-final__s" data-l="finalS">ورود با کد دعوت است؛ جمعِ کوچک، بی‌سروصدا، و کاملاً خصوصی.</p>
+    <a href="{% url 'accounts:register' %}" class="lp-btn lp-btn--primary lp-btn--xl" data-l="finalCta">همین حالا شروع کن</a>
+  </section>
+
+  <footer class="lp-foot">
+    <a href="{% url 'core:about' %}" data-l="how">چطور امن است؟</a>
+    <span>·</span>
+    <span data-l="invite">ورود فقط با کد دعوت و تایید ادمین</span>
+    <span>·</span>
+    <span><span data-l="ver">نسخه‌ی ۴.۰</span> · <a href="{% url 'core:whoami' %}" class="lp-credit" aria-label="سازنده"><svg class="lp-heart" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 20.3l-1.3-1.2C6.1 15 3.2 12.4 3.2 9.2A4.2 4.2 0 0 1 7.4 5c1.5 0 2.9.7 3.8 1.8l.8 1 .8-1A4.7 4.7 0 0 1 16.6 5a4.2 4.2 0 0 1 4.2 4.2c0 3.2-2.9 5.8-7.5 9.9z"/></svg></a></span>
+  </footer>
+</main>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}خطای سرور · Aegis Planner{% endblock %}
+{% block body_class %}auth{% endblock %}
+{% block head %}<script src="{% static 'js/prefs.js' %}"></script>
+<script defer src="{% static 'js/auth_i18n.js' %}"></script>{% endblock %}
+
+{% block body %}
+<main class="auth-wrap">
+  <div class="auth-card auth-card--center">
+    <div class="brand"><span class="brand__mark" aria-hidden="true"></span><span class="brand__name">Aegis Planner</span></div>
+    <p class="err-code" data-l="e500Code">۵۰۰</p>
+    <h1 class="auth-title" data-l="e500Title">خطای سرور</h1>
+    <p class="auth-sub" data-l="e500Sub">مشکلی پیش آمد. کمی بعد دوباره تلاش کن.</p>
+    <a href="/" class="btn btn--ghost" data-l="backHome">بازگشت به خانه</a>
+  </div>
+</main>
+{% endblock %}

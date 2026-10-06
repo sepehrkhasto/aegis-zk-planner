@@ -1,0 +1,27 @@
+# Secrets & local config
+.env
+
+# Database
+db.sqlite3
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Collected static
+staticfiles/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+backups/
+
+# Node / OS
+node_modules/
+*.log
+Thumbs.db

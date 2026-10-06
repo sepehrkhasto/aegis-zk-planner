@@ -1,0 +1,206 @@
+/* subscribe.css — v5.3
+ *
+ * Split out of app.css because the subscription page is a standalone
+ * server-rendered page: shipping its styles inside the main app bundle
+ * made every vault load pay for a page most sessions never open. This is
+ * the same reasoning that already keeps panel.css separate.
+ */
+
+/* ================================================================== *
+ * v4.9 — صفحه‌ی اشتراک
+ *
+ * Design note. Aegis is not tiered: everyone gets the whole product, and the
+ * only variable is how long it runs. So this page deliberately has no feature
+ * checklist — a column of identical ticks would be padding pretending to be a
+ * comparison. The two numbers that actually decide the choice are the length
+ * and the monthly equivalent, and those carry the visual weight.
+ *
+ * The signature is the twelve-cell track: twelve months of a year, filled to
+ * the span being bought. For a *planner*, the calendar year is the honest
+ * ruler — the structure encodes the thing itself rather than decorating it.
+ * ================================================================== */
+
+.sub-page { background: var(--ink); min-height: 100vh; }
+.sub-wrap {
+  max-width: 940px; margin-inline: auto;
+  padding: clamp(20px, 5vw, 44px) clamp(14px, 4vw, 28px) 64px;
+}
+
+/* --- header --- */
+.sub-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--muted); font-size: var(--fs-1); text-decoration: none;
+  padding: 6px 2px; margin-bottom: 18px;
+  transition: color var(--dur-2, .14s) var(--ease, ease);
+}
+.sub-back:hover { color: var(--accent); }
+.sub-back > span[aria-hidden] { font-size: 1.1em; }
+.sub-title {
+  margin: 0 0 8px;
+  font-size: clamp(1.6rem, 5vw, var(--fs-6));
+  font-weight: var(--fw-bold); letter-spacing: -.02em;
+  line-height: var(--lh-tight); color: var(--text);
+}
+.sub-lede {
+  margin: 0 0 26px; color: var(--muted);
+  font-size: var(--fs-3); line-height: var(--lh-body); max-width: 46ch;
+}
+
+/* --- status strip --- */
+.sub-status {
+  border: 1px solid var(--line); border-inline-start-width: 3px;
+  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 26px;
+  background: var(--surface);
+}
+.sub-status--warn { border-inline-start-color: var(--warn); background: var(--warning-soft); }
+.sub-status--ok   { border-inline-start-color: var(--ok);   background: var(--success-soft); }
+.sub-status__t { font-weight: var(--fw-bold); margin-bottom: 3px; color: var(--text); }
+.sub-status--warn .sub-status__t { color: var(--warn); }
+.sub-status--ok   .sub-status__t { color: var(--ok); }
+.sub-status__s { color: var(--muted); font-size: var(--fs-1); line-height: var(--lh-body); }
+
+/* --- plans --- */
+.sub-radio { position: absolute; opacity: 0; pointer-events: none; }
+.sub-plans {
+  display: grid; gap: 12px; margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+.sub-card {
+  position: relative; display: flex; flex-direction: column; gap: 10px;
+  padding: 20px 18px 18px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); cursor: pointer;
+  transition: border-color var(--dur-2, .14s) var(--ease, ease),
+              background var(--dur-2, .14s) var(--ease, ease),
+              transform var(--dur-2, .14s) var(--ease, ease);
+}
+.sub-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+
+/* the chosen plan: accent border and a lifted surface, nothing louder */
+.sub-radio:checked + .sub-card {
+  border-color: var(--accent);
+  background: var(--primary-soft);
+  box-shadow: var(--sh-2);
+}
+.sub-radio:focus-visible + .sub-card { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.sub-card__save {
+  position: absolute; top: -9px; inset-inline-end: 14px;
+  background: var(--ok); color: #04210f;
+  font-size: var(--fs-0); font-weight: var(--fw-bold);
+  padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+}
+.sub-card__dur { display: flex; align-items: baseline; gap: 6px; }
+.sub-card__n {
+  font-size: 2.4rem; font-weight: var(--fw-bold);
+  line-height: 1; letter-spacing: -.03em; color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.sub-radio:checked + .sub-card .sub-card__n { color: var(--accent); }
+.sub-card__unit { color: var(--muted); font-size: var(--fs-2); font-weight: var(--fw-medium); }
+
+/* the twelve-month track — the span you are buying, against a year */
+.sub-track {
+  position: relative; display: grid; gap: 3px;
+  grid-template-columns: repeat(12, 1fr);
+  height: 6px; margin: 2px 0 4px;
+}
+.sub-track__c { display: block; height: 100%; border-radius: 2px; background: var(--surface-2); }
+.sub-track__fill {
+  position: absolute; inset-block: 0; inset-inline-start: 0;
+  min-width: 6px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  opacity: .85;
+}
+/* The span is a fixed set of four values, so it is expressed as four classes
+   rather than an inline custom property: the app runs under a strict CSP that
+   forbids inline style, and the project's CSP test enforces it. */
+.sub-track__fill--1m  { width: calc((1 / 12) * 100% - 3px); }
+.sub-track__fill--3m  { width: calc((3 / 12) * 100% - 3px); }
+.sub-track__fill--6m  { width: calc((6 / 12) * 100% - 3px); }
+.sub-track__fill--12m { width: calc(100% - 3px); }
+[dir="rtl"] .sub-track__fill { background: linear-gradient(270deg, var(--accent), var(--accent-2)); }
+
+.sub-card__price { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
+.sub-card__price > b {
+  font-size: var(--fs-4); font-weight: var(--fw-bold); color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.sub-card__cur { color: var(--muted); font-size: var(--fs-1); }
+.sub-card__per { color: var(--muted); font-size: var(--fs-1); }
+.sub-card__per > b { color: var(--text); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+
+.sub-card__pick {
+  margin-top: auto; padding-top: 10px;
+  border-top: 1px solid var(--divider);
+  font-size: var(--fs-1); font-weight: var(--fw-semibold); color: var(--muted);
+}
+.sub-card__pickOn { display: none; color: var(--accent); }
+.sub-radio:checked + .sub-card .sub-card__pickOn { display: inline; }
+.sub-radio:checked + .sub-card .sub-card__pickOff { display: none; }
+
+/* --- payment --- */
+.sub-h2 {
+  margin: 0 0 14px; font-size: var(--fs-4); font-weight: var(--fw-bold);
+  color: var(--text); letter-spacing: -.01em;
+}
+.sub-pay__grid {
+  display: grid; gap: 12px; margin-bottom: 26px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.sub-method {
+  display: flex; flex-direction: column; gap: 8px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px; background: var(--surface);
+}
+.sub-method--live { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.sub-method--soon { opacity: .72; }
+.sub-method__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sub-method__t { font-weight: var(--fw-bold); color: var(--text); }
+.sub-method__s { margin: 0; color: var(--muted); font-size: var(--fs-1); line-height: var(--lh-body); }
+.sub-tgid {
+  display: inline-block; color: var(--accent); font-weight: var(--fw-semibold);
+  background: var(--primary-soft); padding: 1px 7px; border-radius: 6px;
+}
+.sub-badge {
+  font-size: var(--fs-0); font-weight: var(--fw-semibold);
+  padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--muted); white-space: nowrap;
+}
+.sub-badge--live { border-color: var(--ok); color: var(--ok); background: var(--success-soft); }
+.sub-method__go { margin-top: 6px; text-align: center; text-decoration: none; }
+.sub-method__go[disabled] { cursor: not-allowed; }
+a.sub-method__go { display: block; padding: 12px 16px; border-radius: var(--radius-sm); }
+
+/* --- closing note --- */
+.sub-note {
+  margin: 0; padding: 16px 18px;
+  border: 1px dashed var(--divider); border-radius: var(--radius);
+  color: var(--muted); font-size: var(--fs-1); line-height: var(--lh-body);
+}
+.sub-note > span[data-l="noteT"] { color: var(--text); font-weight: var(--fw-semibold); }
+.sub-note__s { display: block; margin-top: 4px; }
+
+/* --- phones --- */
+@media (max-width: 560px) {
+  .sub-plans { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .sub-card { padding: 16px 14px 14px; }
+  .sub-card__n { font-size: 2rem; }
+  .sub-lede { font-size: var(--fs-2); }
+}
+@media (max-width: 360px) {
+  .sub-plans { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sub-card, .sub-back { transition: none; }
+  .sub-card:hover { transform: none; }
+}
+
+/* the banner's action sits at the end of the row and never wraps oddly */
+.ro-banner { flex-wrap: wrap; }
+.ro-banner__go { margin-inline-start: auto; align-self: center; text-decoration: none; white-space: nowrap; }
+@media (max-width: 480px) {
+  .ro-banner__go { margin-inline-start: 0; width: 100%; text-align: center; }
+}
+

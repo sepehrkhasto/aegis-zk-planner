@@ -1,0 +1,47 @@
+{% extends "panel/base_panel.html" %}
+{% load static %}
+{% block ptitle %}درخواست‌های خرید{% endblock %}
+
+{% block content %}
+<h1 class="pnl-h1" data-l="puTitle">درخواست‌های خرید اشتراک</h1>
+<p class="pnl-sub" data-l="puSub">فرم عمومی صفحه‌ی اول. رسیدگی‌شده‌ها را علامت بزن تا صف تمیز بماند.</p>
+
+{% if rows %}
+<div class="pnl-scroll"><table class="pnl-table">
+  <thead><tr>
+    <th data-l="puName">نام</th>
+    <th data-l="puPhone">شماره</th>
+    <th data-l="puEmail">ایمیل</th>
+    <th data-l="puNote">توضیح</th>
+    <th data-l="puWhen">زمان</th>
+    <th data-l="puState">وضعیت</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr{% if r.handled %} class="pnl-row--dim"{% endif %}>
+      <td>{{ r.name }}</td>
+      <td class="pnl-ltr">{{ r.phone }}</td>
+      <td class="pnl-ltr">{{ r.email|default:"—" }}</td>
+      <td>{{ r.note|default:"—" }}</td>
+      <td>{{ r.created_at|date:"Y-m-d H:i" }}</td>
+      <td>{% if r.handled %}<span class="badge" data-l="puDone">رسیدگی‌شده</span>
+          {% else %}<span class="badge badge--exam" data-l="puNew">جدید</span>{% endif %}</td>
+      <td>
+        <div class="pnl-act">
+          <form method="post" action="{% url 'panel:purchase_toggle' r.pk %}">{% csrf_token %}
+            <button class="btn btn--ghost btn--sm" data-l="puToggle">تغییر وضعیت</button>
+          </form>
+          <form method="post" action="{% url 'panel:purchase_delete' r.pk %}">{% csrf_token %}
+            <button class="btn btn--ghost btn--sm btn--danger" data-l="puDelete">حذف</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}
+<p class="pnl-empty" data-l="puEmpty">هنوز درخواستی ثبت نشده است.</p>
+{% endif %}
+{% endblock %}

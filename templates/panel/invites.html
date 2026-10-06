@@ -1,0 +1,44 @@
+{% extends "panel/base_panel.html" %}
+{% block ptitle %}کدهای دعوت{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <h2 class="panel__title" data-l="hNewInvite">ساخت کد دعوت</h2>
+  <form method="post" class="pnl-form">
+    {% csrf_token %}
+    <div class="field"><label data-l="lbLabel">برچسب (اختیاری)</label><input type="text" name="label" placeholder="مثلاً برای علی" data-l-ph="phLabel"></div>
+    <div class="field"><label data-l="lbMaxUses">حداکثر استفاده</label><input type="number" name="max_uses" value="1" min="1" max="50"></div>
+    <div class="field"><label data-l="lbExpiry">انقضا (روز؛ ۰ = بدون انقضا)</label><input type="number" name="days" value="0" min="0" max="365"></div>
+    <button type="submit" class="btn btn--primary btn--sm" data-l="btnCreate">بساز</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2 class="panel__title" data-l="hInvites">کدهای موجود</h2>
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head"><th data-l="thCode">کد</th><th data-l="thLabel">برچسب</th><th data-l="thUses">استفاده</th><th data-l="thStatus">وضعیت</th><th></th></tr>
+    {% for i in invites %}
+    <tr>
+      <td><code class="pnl-code" dir="ltr">{{ i.code }}</code></td>
+      <td class="pnl-dim">{{ i.label|default:"—" }}</td>
+      <td class="pnl-dim">{{ i.used_count }}/{{ i.max_uses }}</td>
+      <td>
+        {% if i.is_usable %}<span class="badge badge--exam" data-l="stActive">فعال</span>
+        {% elif not i.is_active %}<span class="badge badge--over" data-l="stOff">خاموش</span>
+        {% elif i.is_expired %}<span class="badge badge--over" data-l="stExpired">منقضی</span>
+        {% else %}<span class="badge" data-l="stUsedUp">مصرف‌شده</span>{% endif %}
+        {% if i.expires_at %}<span class="badge"><span data-l="stUntil">تا</span> {{ i.expires_at|date:"Y/m/d" }}</span>{% endif %}
+      </td>
+      <td class="pnl-act">
+        <form method="post" action="{% url 'panel:invite_toggle' i.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn--ghost btn--sm" data-l="{% if i.is_active %}btnOff{% else %}btnOn{% endif %}">{% if i.is_active %}خاموش{% else %}روشن{% endif %}</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="pnl-dim" data-l="emptyInvites">هنوز کدی ساخته نشده.</td></tr>
+    {% endfor %}
+  </table></div>
+</div>
+{% endblock %}

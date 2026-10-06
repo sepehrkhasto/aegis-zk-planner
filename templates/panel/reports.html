@@ -1,0 +1,115 @@
+{% extends "panel/base_panel.html" %}
+{% load static %}
+{% block ptitle %}گزارش‌ها{% endblock %}
+
+{% block content %}
+
+<div class="rp-head">
+  <h1 class="rp-title" data-l="rpTitle">گزارش‌ها</h1>
+  <p class="rp-lede" data-l="rpLede">۳۰ روز گذشته. همه‌ی اعداد از رویدادهای ثبت‌شده می‌آیند، نه تخمین.</p>
+</div>
+
+{# ---- how people arrived ---- #}
+<div class="panel">
+  <h2 class="panel__title" data-l="rpRoutes">مسیر ثبت‌نام</h2>
+  {% if signup_total %}
+  <div class="rp-bars">
+    {% for r in by_route %}
+    <div class="rp-bar">
+      <div class="rp-bar__top">
+        <span class="rp-bar__label">{{ r.label }}</span>
+        <span class="rp-bar__n">{{ r.count }}</span>
+      </div>
+      {# width is set by a data attribute + CSS, never inline style (strict CSP) #}
+      <div class="rp-bar__track"><i class="rp-bar__fill" data-pct="{{ r.count }}"></i></div>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="pnl-dim rp-total"><span data-l="rpTotalSignups">مجموع ثبت‌نام</span>: {{ signup_total }}</p>
+  {% else %}
+  <p class="pnl-note" data-l="rpNoSignups">در ۳۰ روز گذشته ثبت‌نامی نبوده.</p>
+  {% endif %}
+</div>
+
+{# ---- who reached for a plan ---- #}
+<div class="panel">
+  <h2 class="panel__title" data-l="rpIntent">قصد خرید</h2>
+  <p class="pnl-note" data-l="rpIntentNote">
+    این‌ها کلیک روی دکمه‌ی تلگرام‌اند، نه فروش. یعنی چند نفر تا لبه‌ی خرید آمدند.
+  </p>
+  {% if by_plan %}
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head">
+      <th data-l="rpPlan">پلن</th>
+      <th data-l="rpReaches">تعداد</th>
+      <th data-l="rpValue">ارزش بالقوه</th>
+    </tr>
+    {% for r in by_plan %}
+    <tr>
+      <td class="pnl-user">{{ r.plan }}</td>
+      <td>{{ r.count }}</td>
+      <td class="pnl-dim">{{ r.value }}</td>
+    </tr>
+    {% endfor %}
+  </table></div>
+  {% else %}
+  <p class="pnl-dim" data-l="rpNoIntent">هنوز کسی روی دکمه‌ی خرید نزده.</p>
+  {% endif %}
+</div>
+
+{# ---- recent sign-up events ---- #}
+<div class="panel">
+  <h2 class="panel__title" data-l="rpEvents">آخرین ثبت‌نام‌ها</h2>
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head">
+      <th data-l="thUsername">نام کاربری</th>
+      <th data-l="rpRoute">مسیر</th>
+      <th data-l="rpCode">کد</th>
+      <th data-l="rpDays">روز</th>
+      <th data-l="rpWhen">زمان</th>
+    </tr>
+    {% for e in events %}
+    <tr>
+      <td class="pnl-user">{{ e.username }}</td>
+      <td class="pnl-dim">{{ e.get_route_display }}</td>
+      <td class="pnl-dim" dir="ltr">{{ e.invite_code|default:"—" }}</td>
+      <td>{% if e.auto_approved %}{{ e.premium_days }}{% else %}—{% endif %}</td>
+      <td class="pnl-dim">{{ e.created_at|date:"Y/m/d H:i" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="pnl-dim" data-l="rpNone">چیزی ثبت نشده.</td></tr>
+    {% endfor %}
+  </table></div>
+</div>
+
+{# ---- recently seen ---- #}
+<div class="panel">
+  <h2 class="panel__title" data-l="rpSeen">آخرین فعالیت</h2>
+  <p class="pnl-note" data-l="rpSeenNote">
+    این «آخرین باری که دیده شده» است، نه لاگ ورود — مهرِ زمان عمداً ساعتی
+    یک‌بار نوشته می‌شود تا چیزی برای ردیابی رفتار کاربر جمع نشود.
+  </p>
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head">
+      <th data-l="thUsername">نام کاربری</th>
+      <th data-l="thLastSeen">آخرین فعالیت</th>
+      <th data-l="thStatus">وضعیت</th>
+    </tr>
+    {% for u in recent_seen %}
+    <tr>
+      <td class="pnl-user">{{ u.username }}</td>
+      <td class="pnl-dim">{{ u.last_seen|date:"Y/m/d H:i" }}</td>
+      <td>
+        {% if u.premium_active %}<span class="badge badge--exam" data-l="stPremOn">فعال</span>
+        {% else %}<span class="badge badge--over" data-l="stPremOff">منقضی</span>{% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" class="pnl-dim" data-l="rpNone">چیزی ثبت نشده.</td></tr>
+    {% endfor %}
+  </table></div>
+</div>
+
+
+<script src="{% static 'js/panel_reports.js' %}" defer></script>
+{% endblock %}

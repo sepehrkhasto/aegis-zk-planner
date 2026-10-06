@@ -1,0 +1,128 @@
+{% extends "panel/base_panel.html" %}
+{% block ptitle %}پشتیبان‌گیری{% endblock %}
+
+{% block content %}
+
+<div class="rp-head">
+  <h1 class="rp-title" data-l="bkTitle">پشتیبان‌گیری</h1>
+  <p class="rp-lede" data-l="bkLede">
+    خروجی کامل دیتابیس — همه‌ی حساب‌ها و همه‌ی ولت‌ها — در یک فایل رمزنگاری‌شده.
+  </p>
+</div>
+
+{# The one thing an operator must understand before touching this page. #}
+<div class="bk-warn">
+  <div class="bk-warn__t" data-l="bkWarnT">این فایل، ارزشمندترین چیزی است که تولید می‌کنی.</div>
+  <p class="bk-warn__s" data-l="bkWarnS">
+    محتوای ولت‌ها رمزنگاری‌شده می‌ماند و ما هیچ‌وقت نمی‌توانیم بخوانیمش. ولی فایل
+    شامل هشِ رمز همه‌ی کاربران و کلیدهای بازیابی رمزشده است؛ کسی که فایل را داشته
+    باشد می‌تواند سرِ فرصت و آفلاین رویشان کار کند. به همین دلیل فایل با یک عبارت
+    عبور جداگانه رمز می‌شود و بدون آن عبارت هیچ‌کس — از جمله خودت — بازش نمی‌کند.
+  </p>
+</div>
+
+{# ---- what's inside ---- #}
+<div class="panel">
+  <h2 class="panel__title" data-l="bkContents">محتوای پشتیبان</h2>
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head"><th data-l="bkTable">جدول</th><th data-l="bkRows">رکورد</th></tr>
+    {% for label, n in counts %}
+    <tr><td class="pnl-user" dir="ltr">{{ label }}</td><td>{{ n }}</td></tr>
+    {% endfor %}
+    <tr><td class="pnl-user" data-l="bkTotal">مجموع</td><td><b>{{ total }}</b></td></tr>
+  </table></div>
+</div>
+
+{# ---- export ---- #}
+<div class="panel">
+  <h2 class="panel__title" data-l="bkExport">گرفتن خروجی</h2>
+  <form method="post" action="{% url 'panel:backup_export' %}" class="bk-form">
+    {% csrf_token %}
+    <label class="rg-field">
+      <span data-l="bkLoginPw">رمز ورود خودت</span>
+      <input type="password" name="login_password" autocomplete="current-password" required>
+    </label>
+    <label class="rg-field">
+      <span data-l="bkPass">عبارت عبور فایل</span>
+      <input type="password" name="passphrase" minlength="{{ min_pass }}"
+             autocomplete="new-password" required>
+    </label>
+    <label class="rg-field">
+      <span data-l="bkPass2">تکرار عبارت عبور</span>
+      <input type="password" name="passphrase2" minlength="{{ min_pass }}"
+             autocomplete="new-password" required>
+    </label>
+    <div class="bk-form__act">
+      <button type="submit" class="btn btn--primary btn--sm" data-l="bkExportBtn">دانلود فایل رمزشده</button>
+    </div>
+  </form>
+  <p class="rg-warn" data-l="bkExportNote">
+    عبارت عبور را جایی امن نگه دار. اگر گمش کنی، فایل برای همیشه غیرقابل بازگشایی است —
+    نه راه دور زدنی هست، نه بازیابی‌ای.
+  </p>
+</div>
+
+{# ---- import ---- #}
+<div class="panel bk-danger">
+  <h2 class="panel__title" data-l="bkImport">بازگردانی</h2>
+  <p class="pnl-note" data-l="bkImportNote">
+    بازگردانی، محتوای فعلی همه‌ی جدول‌های بالا را <b data-l="bkReplaces">جایگزین</b> می‌کند. پیش از
+    شروع، یک اسنپ‌شات از وضعیت فعلی گرفته و ذخیره می‌شود تا اگر فایل اشتباهی بود،
+    راه برگشت داشته باشی.
+  </p>
+  <form method="post" action="{% url 'panel:backup_import' %}"
+        enctype="multipart/form-data" class="bk-form">
+    {% csrf_token %}
+    <label class="rg-field bk-field--wide">
+      <span data-l="bkFile">فایل پشتیبان</span>
+      <input type="file" name="bundle" accept=".aegis" required>
+    </label>
+    <label class="rg-field">
+      <span data-l="bkLoginPw">رمز ورود خودت</span>
+      <input type="password" name="login_password" autocomplete="current-password" required>
+    </label>
+    <label class="rg-field">
+      <span data-l="bkPass">عبارت عبور فایل</span>
+      <input type="password" name="passphrase" autocomplete="off" required>
+    </label>
+    <label class="rg-field">
+      <span data-l="bkConfirm">برای تایید، عبارت RESTORE را بنویس</span>
+      <input type="text" name="confirm" dir="ltr" autocomplete="off"
+             pattern="RESTORE" required>
+    </label>
+    <div class="bk-form__act">
+      <button type="submit" class="btn btn--ghost btn--sm bk-danger__btn"
+              data-l="bkImportBtn">بازگردانی کن</button>
+    </div>
+  </form>
+</div>
+
+{# ---- snapshots ---- #}
+{% if snapshots %}
+<div class="panel">
+  <h2 class="panel__title" data-l="bkSnaps">اسنپ‌شات‌های پیش از بازگردانی</h2>
+  <p class="pnl-note" data-l="bkSnapsNote">
+    این‌ها خودکار و درست پیش از هر بازگردانی ساخته شده‌اند، با همان عبارت عبوری که
+    آن لحظه وارد کردی. ده تای آخر نگه داشته می‌شود.
+  </p>
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head">
+      <th data-l="bkSnapName">فایل</th><th data-l="bkSnapWhen">زمان</th>
+      <th data-l="bkSnapSize">حجم</th><th></th>
+    </tr>
+    {% for s in snapshots %}
+    <tr>
+      <td class="pnl-user" dir="ltr">{{ s.name }}</td>
+      <td class="pnl-dim">{{ s.when|date:"Y/m/d H:i" }}</td>
+      <td class="pnl-dim">{{ s.size|filesizeformat }}</td>
+      <td class="pnl-act">
+        <a class="btn btn--ghost btn--sm"
+           href="{% url 'panel:snapshot_download' s.name %}" data-l="bkDownload">دانلود</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table></div>
+</div>
+{% endif %}
+
+{% endblock %}

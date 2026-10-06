@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}<link rel="stylesheet" href="{% static 'css/panel.css' %}">
+<script src="{% static 'js/prefs.js' %}"></script>
+<script defer src="{% static 'js/panel_i18n.js' %}"></script>{% endblock %}
+
+{% block title %}{% block ptitle %}پنل مدیریت{% endblock %} · Aegis Planner{% endblock %}
+{% block body_class %}app{% endblock %}
+
+{% block body %}
+<header class="content-top pnl-top">
+  <div class="brand"><span class="brand__mark" aria-hidden="true"></span><span class="brand__name" data-l="panelTitle">پنل مدیریت</span></div>
+  <nav class="pnl-nav">
+    <a href="{% url 'panel:home' %}" class="{% if nav == 'home' %}active{% endif %}" data-l="navHome">داشبورد</a>
+    <a href="{% url 'panel:users' %}" class="{% if nav == 'users' %}active{% endif %}" data-l="navUsers">کاربران</a>
+    <a href="{% url 'panel:invites' %}" class="{% if nav == 'invites' %}active{% endif %}" data-l="navInvites">کدهای دعوت</a>
+    <a href="{% url 'panel:feedback' %}" class="{% if nav == 'feedback' %}active{% endif %}" data-l="navFeedback">بازخوردها</a>
+    {% comment %}
+      v4.1 — the purchase-request page is out of the panel: the form that fed
+      it was removed from the landing in v3.4.2, so it could only ever show
+      old rows. The route and the stored requests are deliberately KEPT so
+      nothing already submitted is lost; it just isn't a nav item any more.
+    {% endcomment %}
+    <a href="{% url 'panel:reports' %}" class="{% if nav == 'reports' %}active{% endif %}" data-l="navReports">گزارش‌ها</a>
+    {% if user.is_superuser %}<a href="{% url 'panel:backup' %}" class="{% if nav == 'backup' %}active{% endif %}" data-l="navBackup">پشتیبان</a>{% endif %}
+    <a href="{% url 'panel:broadcasts' %}" class="{% if nav == 'broadcasts' %}active{% endif %}" data-l="navBroadcasts">اعلان سراسری</a>
+  </nav>
+  <div class="pnl-actions">
+    <button type="button" id="pnl-lang" class="btn btn--ghost btn--sm" data-l-aria="ariaLang" aria-label="تغییر زبان">EN</button>
+    <a href="/app/" class="btn btn--ghost btn--sm" data-l="openApp">اپ</a>
+    <form method="post" action="{% url 'accounts:logout' %}" class="topbar__logout">
+      {% csrf_token %}
+      <button type="submit" class="btn btn--ghost btn--sm" data-l="logout">خروج</button>
+    </form>
+  </div>
+</header>
+
+<main class="app-main pnl-main">
+  {% include "_messages.html" %}
+  <p class="pnl-note" data-l="zkNote">این پنل فقط حساب‌ها را مدیریت می‌کند؛ محتوای کاربران رمزنگاری‌شده است و هیچ‌کس — از جمله همین پنل — نمی‌تواند آن را بخواند.</p>
+  {% block content %}{% endblock %}
+</main>
+{% endblock %}

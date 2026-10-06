@@ -1,0 +1,40 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  {% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+  {% block meta %}{% endblock %}
+  {% comment %}
+    v6.7 — the phone's status bar follows the theme.
+
+    A single colour meant a light-theme user got a dark bar above a white app,
+    which is the detail that makes a web app look like a web page in a browser
+    rather than an app. Two declarations with media queries let the OS pick,
+    and the values are the brand's own surfaces so the bar reads as part of
+    the app instead of a strip of something else.
+  {% endcomment %}
+  <meta name="theme-color" content="#0b1017" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preload" href="{% static 'fonts/Vazirmatn-Variable.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/logo.svg' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">
+  <link rel="icon" type="image/png" sizes="64x64" href="{% static 'img/favicon-64.png' %}">
+  <link rel="manifest" href="/manifest.webmanifest">
+  {# v6.7 — iOS wants its own square at 180px; it applies the rounding itself. #}
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'pwa/apple-touch-icon.png' %}">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Aegis Planner">
+  <title>{% block title %}Aegis Planner{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {% block body %}{% endblock %}
+</body>
+</html>

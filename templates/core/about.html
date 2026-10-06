@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}چطور امن است؟ · Aegis Planner{% endblock %}
+{% block body_class %}land doc{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/landing.css' %}">{% endblock %}
+
+{% block body %}
+<div class="lp-bg" aria-hidden="true">
+  <div class="lp-aurora lp-aurora--1"></div>
+  <div class="lp-aurora lp-aurora--2"></div>
+  <div class="lp-stars"></div>
+</div>
+
+<header class="topbar lp-top">
+  <div class="brand">
+    <img class="brand__logo" src="{% static 'img/logo.svg' %}" alt="" aria-hidden="true" width="26" height="26">
+    <span class="brand__name" data-l="brand">Aegis Planner</span>
+  </div>
+  <nav class="topbar__nav">
+    <button type="button" id="lang-toggle" class="btn btn--ghost btn--sm land-lang">EN</button>
+    {% if user.is_authenticated %}
+    <a href="{% url 'vault:app' %}" class="topbar__link" data-l="enterApp">ورود به اپ</a>
+    {% else %}
+    <a href="{% url 'accounts:login' %}" class="topbar__link" data-l="login">ورود</a>
+    {% endif %}
+  </nav>
+</header>
+
+<main class="doc-main doc-main--land">
+  <p class="lp-kicker doc-kicker"><span class="lp-kicker__dot"></span><span data-l="kicker">مدل امنیتی · زیرو-نالج</span></p>
+  <h1 class="doc-title" data-l="title">چطور اطلاعاتت محرمانه می‌ماند</h1>
+  <p class="doc-lead" data-l="lead">
+    این پلنر با مدل «زیرو-نالج» ساخته شده است: سرور ما هیچ‌وقت متن خام اطلاعاتت را
+    نمی‌بیند. همه‌ی رمزنگاری و رمزگشایی در مرورگر خودت انجام می‌شود.
+  </p>
+
+  <section class="doc-section doc-card">
+    <h2 data-l="h1">یک مستر پسورد، کلید همه‌چیز</h2>
+    <p data-l="p1">وقتی ولت را می‌سازی، یک «مستر پسورد» انتخاب می‌کنی. مرورگرت از این رمز، با صدها هزار مرحله‌ی محاسبه‌ی ریاضی، یک کلید می‌سازد. این رمز و کلیدش هرگز از دستگاهت خارج نمی‌شوند — نه ما می‌بینیمشان، نه هیچ‌کس دیگر.</p>
+  </section>
+
+  <section class="doc-section doc-card">
+    <h2 data-l="h2">رمزنگاری با AES-256-GCM</h2>
+    <p data-l="p2">محتوای ولت تو — یادداشت‌ها، تسک‌ها، جورنال و بقیه — پیش از خروج از مرورگر با AES-256-GCM رمز می‌شود. این یکی از استانداردترین و قوی‌ترین الگوریتم‌های رمزنگاری است و علاوه بر محرمانگی، دستکاری‌نشدن داده را هم تضمین می‌کند.</p>
+  </section>
+
+  <section class="doc-section doc-card">
+    <h2 data-l="h3">سرور فقط یک انبار کور است</h2>
+    <p data-l="p3">چیزی که روی سرور ذخیره می‌شود فقط متنِ رمزشده و یک «کلید بسته‌بندی‌شده» است که بدون مستر پسورد بی‌فایده است. حتی اگر کسی به دیتابیس یا خودِ سرور دسترسی پیدا کند — یا حتی ادمین سیستم — چیزی جز داده‌ی رمزشده نمی‌بیند.</p>
+  </section>
+
+  <section class="doc-section doc-card">
+    <h2 data-l="h4">پشتیبان رمزنگاری‌شده در دست خودت</h2>
+    <p data-l="p4">هر وقت بخواهی می‌توانی از ولت یک فایل پشتیبان بگیری. این فایل هم کاملاً رمزشده است و فقط با مستر پسورد خودت باز می‌شود؛ پس می‌توانی با خیال راحت هرجا نگهش داری و بعداً دوباره وارد کنی.</p>
+  </section>
+
+  <section class="doc-section doc-card">
+    <h2 data-l="h5">لایه‌های امنیتی دیگر</h2>
+    <p data-l="p5">ثبت‌نام فقط با کد دعوت و پس از تایید ادمین انجام می‌شود، ورود در برابر حمله‌ی حدس‌زدن رمز با قفل‌شدن حساب و محدودیت نرخ محافظت می‌شود، ارتباط روی HTTPS رمز است، و سیاست امنیتی محتوا (CSP) سخت‌گیرانه جلوی اجرای اسکریپت ناخواسته را می‌گیرد.</p>
+  </section>
+
+  <section class="doc-section doc-card doc-card--note">
+    <h2 data-l="h6">یک نکته‌ی صادقانه</h2>
+    <p data-l="p6">قدرت این مدل، مسئولیتش هم هست: چون کلید فقط دست توست، اگر مستر پسورد را فراموش کنی هیچ راهی برای بازیابی اطلاعات وجود ندارد. مستر پسورد قوی انتخاب کن، جای امنی نگهش دار، و مرتب از ولت پشتیبان بگیر. هیچ سیستمی «صددرصد» امن نیست، ولی این مدل کاری می‌کند که محرمانگی اطلاعاتت به سرور و مدیر سیستم وابسته نباشد.</p>
+  </section>
+
+  {% if user.is_authenticated %}
+  <p class="doc-back"><a href="{% url 'vault:app' %}" data-l="backApp">بازگشت به اپ</a></p>
+  {% else %}
+  <p class="doc-back"><a href="{% url 'accounts:login' %}" data-l="back">بازگشت به ورود</a></p>
+  {% endif %}
+</main>
+
+<script src="{% static 'js/langpref.js' %}"></script>
+<script src="{% static 'js/about.js' %}"></script>
+{% endblock %}

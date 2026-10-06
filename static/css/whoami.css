@@ -1,0 +1,128 @@
+/* whoami.css — v3.4.2
+ *
+ * The page behind the heart. A computer terminal, nothing else.
+ * Deliberately self-contained: it does not inherit the app's theme tokens,
+ * because a terminal that changes colour with the user's accent stops
+ * reading as a terminal.
+ */
+
+body.term-page {
+  margin: 0;
+  min-height: 100dvh;
+  background: #05070a;
+  color: #35ff7a;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  /* the page is its own world: never inherit RTL flow into the terminal */
+  direction: ltr;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+.tp { width: 100%; max-width: 680px; position: relative; }
+
+/* --- the screen ---------------------------------------------------------- */
+.tp__screen {
+  border: 1px solid #14361f;
+  border-radius: 12px;
+  background: #070b0e;
+  box-shadow:
+    0 0 0 1px rgba(53, 255, 122, .06),
+    0 30px 80px rgba(0, 0, 0, .7),
+    0 0 90px rgba(53, 255, 122, .07);
+  overflow: hidden;
+}
+
+/* --- title bar ----------------------------------------------------------- */
+.tp__bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 13px;
+  background: #0b1116;
+  border-bottom: 1px solid #14361f;
+}
+.tp__dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.tp__dot--r { background: #ff5f57; }
+.tp__dot--y { background: #febc2e; }
+.tp__dot--g { background: #28c840; }
+.tp__title {
+  margin-inline-start: auto;
+  font: 500 .72rem/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color: #3f5a4a;
+  letter-spacing: .04em;
+}
+
+/* --- the output ---------------------------------------------------------- */
+.tp__out {
+  margin: 0;
+  padding: 26px 22px 34px;
+  font-family: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
+  font-size: clamp(1rem, 4.2vw, 1.6rem);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #35ff7a;
+  text-shadow: 0 0 14px rgba(53, 255, 122, .45);
+  min-height: 5.2em;   /* reserves both lines so nothing jumps while typing */
+}
+
+/* the blinking block cursor */
+.tp__cur {
+  display: inline-block;
+  width: .58em;
+  height: 1.05em;
+  margin-inline-start: 3px;
+  vertical-align: -.16em;
+  background: #35ff7a;
+  box-shadow: 0 0 12px rgba(53, 255, 122, .6);
+  animation: tpBlink 1.05s steps(1) infinite;
+}
+@keyframes tpBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+/* faint scanlines — the difference between "dark div" and "screen" */
+.tp__screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(53, 255, 122, .035) 0 1px,
+    transparent 1px 3px
+  );
+}
+.tp { position: relative; }
+.tp__screen { position: relative; }
+
+/* --- a quiet way back ---------------------------------------------------- */
+.tp__back {
+  position: absolute;
+  top: -34px;
+  left: 2px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #2c6b45;
+  text-decoration: none;
+  font-size: 1.35rem;
+  line-height: 1;
+  transition: color .15s ease, background .15s ease;
+}
+.tp__back:hover { color: #35ff7a; background: rgba(53, 255, 122, .08); }
+.tp__back:focus-visible { outline: 2px solid #35ff7a; outline-offset: 2px; }
+
+/* --- small screens: the terminal is the page ----------------------------- */
+@media (max-width: 520px) {
+  body.term-page { padding: 16px 12px; align-content: center; }
+  .tp__out { padding: 20px 16px 26px; }
+  .tp__back { top: -32px; }
+}
+
+/* --- reduced motion: no typing, no blink, same answer -------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .tp__cur { animation: none; }
+}

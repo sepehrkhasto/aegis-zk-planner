@@ -1,0 +1,11 @@
+{
+  "name": "aegis-planner",
+  "private": true,
+  "description": "Build-time helpers. The app itself ships no framework and no bundler; terser is used only to strip comments from served JS at collectstatic time.",
+  "devDependencies": {
+    "terser": "^5.31.0"
+  },
+  "scripts": {
+    "test": "node tests/js/run.js"
+  }
+}

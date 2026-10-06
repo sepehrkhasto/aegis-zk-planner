@@ -1,0 +1,27 @@
+# Core — Django 4.2 LTS (supported on Python 3.10 / PythonAnywhere)
+Django==4.2.30
+
+# Password hashing (OWASP-recommended)
+argon2-cffi==23.1.0
+
+# Rate limiting for register/login endpoints
+django-ratelimit==4.1.0
+
+# Content-Security-Policy header management
+django-csp==3.8.0
+
+# Load environment variables from a local .env file (dev convenience)
+python-dotenv==1.0.1
+
+# Static file serving under gunicorn (Runflare / any PaaS)
+whitenoise==6.7.0
+# Brotli: ~20% smaller than gzip; WhiteNoise writes .br files automatically
+# at collectstatic time when this is installed.
+Brotli==1.1.0
+
+# WSGI server for cloud deployment (not used on Windows dev or PythonAnywhere)
+gunicorn==23.0.0
+
+# Web Push (v1.11) — VAPID signing + delivery of empty "tickle" pushes
+cryptography>=42.0
+requests>=2.31

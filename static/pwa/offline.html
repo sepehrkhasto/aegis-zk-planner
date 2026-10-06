@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1017">
+<title>آفلاین · Aegis Planner</title>
+<!--
+  v3.6.1 — this page is now COMPLETELY self-contained.
+
+  It used to link /static/css/app.css. That file is never in the offline
+  cache: in production every page requests the HASHED url (app.<hash>.css),
+  so the unhashed one is never stored — meaning the offline page, the one
+  screen whose entire job is to work without a network, rendered with no
+  styling at all. Everything it needs is inline now: no stylesheet, no font
+  file, no icon request, nothing that can 404 while offline.
+  (Served by WhiteNoise, which sends no CSP header, so the inline style is
+  fine — and it is a static file with no user input anywhere in it.)
+-->
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100dvh; min-height: 100vh;
+    display: grid; place-items: center; padding: 24px;
+    background: #0b1017; color: #eaf0f8;
+    font-family: "Vazirmatn", system-ui, "Segoe UI", Tahoma, sans-serif;
+    -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+  }
+  .card {
+    width: 100%; max-width: 430px; text-align: center;
+    background: #141c28; border: 1px solid #24324a;
+    border-radius: 18px; padding: 32px 24px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.45);
+  }
+  .mark {
+    width: 46px; height: 46px; margin: 0 auto 16px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #7c8cff, #4f9cf6 55%, #22d3ee);
+    display: grid; place-items: center;
+    font-weight: 800; font-size: 1.35rem; color: #fff;
+  }
+  h1 { margin: 0 0 10px; font-size: 1.22rem; line-height: 1.7; }
+  p { margin: 0 0 8px; color: #9fb0c9; font-size: .92rem; line-height: 2; }
+  p.en { direction: ltr; font-size: .85rem; }
+  .btn {
+    display: inline-block; margin-top: 18px; padding: 11px 22px;
+    border-radius: 12px; text-decoration: none; font-weight: 600;
+    background: #4f8cff; color: #fff;
+  }
+  .btn:active { transform: translateY(1px); }
+  .hint { margin-top: 16px; font-size: .78rem; color: #6f8099; }
+  @media (prefers-reduced-motion: reduce) { .btn:active { transform: none; } }
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="mark" aria-hidden="true">A</div>
+    <h1>اینترنت قطع است</h1>
+    <p>این صفحه هنوز برای آفلاین ذخیره نشده. اپ اصلی بعد از یک بار بازدیدِ آنلاین، بدون اینترنت هم باز می‌شود.</p>
+    <p class="en">You're offline. This page isn't cached yet — the main app works offline after one online visit.</p>
+    <a class="btn" href="/app/">بازگشت به اپ · Back to the app</a>
+    <p class="hint">داده‌های تو روی همین دستگاه رمزشده‌اند و جایی نرفته‌اند.</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="512" height="512" role="img" aria-label="Aegis">
+  <!-- Aegis mark v3 (v6.4) — the brand rebuild.
+       The old mark was a gradient shield with a letter A inside: the shape
+       every security product reaches for, in the blue-violet-cyan gradient
+       every tech product reaches for. It said "software", not "Aegis".
+
+       This one is flat and closed. An aegis is a shield, and a shield's whole
+       job is that nothing passes through it, so the mark is one solid body
+       with no gradient and no inner highlight. The only interruption is the
+       chevron cut out of it — negative space that reads as the apex of an A
+       and as a seal drawn shut.
+
+       Flat because flat survives: at 16px in a browser tab a gradient turns
+       to mud, while a solid silhouette stays legible. `currentColor` means
+       one file serves the app, the favicon and the install icon. -->
+  <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"
+        d="M16 1.6 3.4 6.2v9.1c0 7.4 5.1 12.6 12.6 15.1 7.5-2.5 12.6-7.7 12.6-15.1V6.2L16 1.6Z
+           M16 9.4l5.7 12.3h-3.9L16 17.2l-1.8 4.5h-3.9L16 9.4Z"/>
+</svg>

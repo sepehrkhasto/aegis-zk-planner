@@ -1,0 +1,198 @@
+{% extends "panel/base_panel.html" %}
+{% block ptitle %}داشبورد مدیریت{% endblock %}
+
+{% block content %}
+
+{% comment %} =================================================================
+   ATTENTION FIRST.
+   The old dashboard opened with eight equal numbers — the least
+   actionable thing on the page. What an operator needs first is
+   "does anything want a decision from me right now?", and for a
+   product whose value is being closed by default, an open door is
+   the item that must never be quietly forgotten.
+   ================================================================= {% endcomment %}
+{% if attention %}
+<section class="at-strip" data-l-aria="atAria" aria-label="نیاز به توجه">
+  {% for a in attention %}
+  <div class="at-item at-item--{{ a.level }}">
+    {% if a.kind == "pending" %}
+    <div class="at-item__body">
+      <div class="at-item__t"><b>{{ a.count }}</b> <span data-l="atPending">حساب در انتظار تایید</span></div>
+      <div class="at-item__s" data-l="atPendingS">تا تایید نشوند وارد نمی‌شوند.</div>
+    </div>
+    <a class="btn btn--ghost btn--sm" href="{{ a.url }}" data-l="atReview">بررسی</a>
+
+    {% elif a.kind == "open_reg" %}
+    <div class="at-item__body">
+      <div class="at-item__t" data-l="atOpenReg">ثبت‌نام بدون کد دعوت باز است</div>
+      <div class="at-item__s">
+        <span data-l="atUntil">تا</span> {{ a.until|date:"H:i" }} ·
+        {{ a.used }}/{{ a.max }} <span data-l="atUsed">ساخته‌شده</span> ·
+        <span data-l="atLeft">جای باقی‌مانده</span> {{ a.left }}
+      </div>
+    </div>
+    <form method="post" action="{% url 'panel:open_reg' %}">
+      {% csrf_token %}<input type="hidden" name="hours" value="0">
+      <button type="submit" class="btn btn--ghost btn--sm" data-l="atCloseNow">همین حالا ببند</button>
+    </form>
+
+    {% elif a.kind == "auto_window" %}
+    <div class="at-item__body">
+      <div class="at-item__t" data-l="atAutoWin">پنجره‌ی تایید خودکار باز است</div>
+      <div class="at-item__s"><span data-l="atUntil">تا</span> {{ a.until|date:"Y/m/d H:i" }}</div>
+    </div>
+    <form method="post" action="{% url 'panel:auto_approve' %}">
+      {% csrf_token %}<input type="hidden" name="hours" value="0">
+      <button type="submit" class="btn btn--ghost btn--sm" data-l="atCloseNow">همین حالا ببند</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% else %}
+<section class="at-strip" data-l-aria="atAriaOk" aria-label="وضعیت">
+  <div class="at-item at-item--ok">
+    <div class="at-item__body">
+      <div class="at-item__t" data-l="atAllClear">همه‌چیز آرام است</div>
+      <div class="at-item__s" data-l="atAllClearS">صفی برای تایید نیست و هیچ درِ بازی نمانده.</div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="stat-card__label" data-l="stTotalUsers">کل کاربران</div><div class="stat-card__value">{{ total_users }}</div></div>
+  <div class="stat-card"><div class="stat-card__label" data-l="stApprovedUsers">تاییدشده</div><div class="stat-card__value">{{ approved_users }}</div></div>
+  <div class="stat-card"><div class="stat-card__label" data-l="stPremActive">اشتراک فعال</div><div class="stat-card__value">{{ premium_active }}</div></div>
+  <div class="stat-card"><div class="stat-card__label" data-l="stActive7">فعال ۷ روز</div><div class="stat-card__value">{{ active_7 }}</div></div>
+  <div class="stat-card"><div class="stat-card__label" data-l="stActive30">فعال ۳۰ روز</div><div class="stat-card__value">{{ active_30 }}</div></div>
+  <div class="stat-card"><div class="stat-card__label" data-l="stVaults">ولت‌ها</div><div class="stat-card__value">{{ vault_count }}</div></div>
+  <div class="stat-card"><div class="stat-card__label" data-l="stActiveInvites">کد دعوت فعال</div><div class="stat-card__value">{{ active_invites }}</div></div>
+</div>
+
+{% comment %} The two windows sit side by side because they are the same decision at two
+   strengths: "skip the queue" and "skip the queue AND the invite". Adjacent,
+   the difference in reach is obvious. {% endcomment %}
+<div class="panel">
+  <h2 class="panel__title" data-l="hRegControl">کنترل ثبت‌نام</h2>
+  <div class="rg-grid">
+
+    <div class="rg-card{% if auto_approve_open %} rg-card--on{% endif %}">
+      <div class="rg-card__top">
+        <span class="rg-card__t" data-l="rgAuto">تایید خودکار</span>
+        <span class="rg-dot{% if auto_approve_open %} rg-dot--on{% endif %}" aria-hidden="true"></span>
+      </div>
+      <p class="rg-card__s" data-l="rgAutoS">کد دعوت هنوز لازم است، ولی تایید دستی نه.</p>
+      {% if auto_approve_open %}
+      <div class="rg-state"><span data-l="atUntil">تا</span> {{ auto_approve_until|date:"Y/m/d H:i" }}</div>
+      {% else %}
+      <div class="rg-state rg-state--off" data-l="rgClosed">بسته</div>
+      {% endif %}
+      <form method="post" action="{% url 'panel:auto_approve' %}" class="rg-form">
+        {% csrf_token %}
+        <label class="rg-field"><span data-l="rgHours">ساعت</span>
+          <input type="number" name="hours" min="1" max="720" step="1" required></label>
+        <button type="submit" class="btn btn--primary btn--sm" data-l="btnOpenWindow">باز کن</button>
+      </form>
+      <form method="post" action="{% url 'panel:auto_approve_days' %}" class="rg-form">
+        {% csrf_token %}
+        <label class="rg-field"><span data-l="rgDays">روز اشتراک</span>
+          <input type="number" name="days" min="1" max="3650" value="{{ auto_approve_days }}" required></label>
+        <button type="submit" class="btn btn--ghost btn--sm" data-l="btnSave">ذخیره</button>
+      </form>
+    </div>
+
+    <div class="rg-card rg-card--wide{% if open_reg_open %} rg-card--alert{% endif %}">
+      <div class="rg-card__top">
+        <span class="rg-card__t" data-l="rgOpen">ثبت‌نام بدون کد دعوت</span>
+        <span class="rg-dot{% if open_reg_open %} rg-dot--alert{% endif %}" aria-hidden="true"></span>
+      </div>
+      <p class="rg-card__s" data-l="rgOpenS">وسیع‌ترین در. برای تست و ثبت‌نام تشویقی — با مهلت و سقف.</p>
+      {% if open_reg_open %}
+      <div class="rg-state rg-state--alert">
+        <span data-l="atUntil">تا</span> {{ open_reg_until|date:"H:i" }} ·
+        {{ open_reg_count }}/{{ open_reg_max }} ·
+        <span data-l="atLeft">جای باقی‌مانده</span> {{ open_reg_left }}
+      </div>
+      {% else %}
+      <div class="rg-state rg-state--off" data-l="rgClosed">بسته</div>
+      {% endif %}
+      <form method="post" action="{% url 'panel:open_reg' %}" class="rg-form rg-form--grid">
+        {% csrf_token %}
+        <label class="rg-field"><span data-l="rgHours">ساعت</span>
+          <input type="number" name="hours" min="1" max="24" step="1" value="2" required></label>
+        <label class="rg-field"><span data-l="rgDays">روز اشتراک</span>
+          <input type="number" name="days" min="1" max="3650" value="{{ open_reg_days }}" required></label>
+        <label class="rg-field"><span data-l="rgMax">سقف تعداد</span>
+          <input type="number" name="max" min="1" max="10000" value="{{ open_reg_max }}" required></label>
+        <label class="rg-check">
+          <input type="checkbox" name="needs_approval" {% if open_reg_needs_approval %}checked{% endif %}>
+          <span data-l="rgNeedsApproval">باز هم تایید دستی لازم باشد</span></label>
+        <div class="rg-form__act">
+          <button type="submit" class="btn btn--primary btn--sm" data-l="btnOpenWindow">باز کن</button>
+          {% if open_reg_open %}<button type="submit" name="hours" value="0" class="btn btn--ghost btn--sm" formnovalidate data-l="btnCloseWindow">ببند</button>{% endif %}
+        </div>
+      </form>
+      <p class="rg-warn" data-l="rgWarn">حداکثر ۲۴ ساعت. وقتی سقف پر شود، پنجره خودکار بسته می‌شود.</p>
+    </div>
+
+  </div>
+</div>
+
+{% if expiring_week %}
+<div class="panel">
+  <h2 class="panel__title" data-l="hExpiring">انقضای این هفته</h2>
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head"><th data-l="thUsername">نام کاربری</th><th data-l="thDaysLeft">روز مانده</th><th data-l="thUntil">تا تاریخ</th><th></th></tr>
+    {% for u in expiring_week %}
+    <tr>
+      <td class="pnl-user">{{ u.username }}</td>
+      <td>{{ u.premium_days_left }}</td>
+      <td class="pnl-dim">{{ u.premium_until|date:"Y/m/d" }}</td>
+      <td class="pnl-act">
+        <form method="post" action="{% url 'panel:user_extend' u.pk %}">
+          {% csrf_token %}<input type="hidden" name="next" value="{% url 'panel:home' %}"><button type="submit" class="btn btn--ghost btn--sm" data-l="btnExtend">+۳۰ روز</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table></div>
+</div>
+{% endif %}
+
+{% if pending_list %}
+<div class="panel">
+  <h2 class="panel__title" data-l="hPending">در انتظار تایید</h2>
+  <div class="pnl-scroll"><table class="pnl-table">
+    {% for u in pending_list %}
+    <tr>
+      <td class="pnl-user">{{ u.username }}</td>
+      <td class="pnl-dim">{{ u.date_joined|date:"Y/m/d H:i" }}</td>
+      <td class="pnl-dim" dir="ltr">{{ u.registered_ip|default:"—" }}</td>
+      <td class="pnl-act">
+        <form method="post" action="{% url 'panel:user_approve' u.pk %}">
+          {% csrf_token %}<input type="hidden" name="next" value="{% url 'panel:home' %}">
+          <button type="submit" class="btn btn--primary btn--sm" data-l="approve">تایید</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table></div>
+</div>
+{% endif %}
+
+<div class="panel">
+  <h2 class="panel__title" data-l="hRecent">آخرین ثبت‌نام‌ها</h2>
+  <div class="pnl-scroll"><table class="pnl-table">
+    {% for u in recent_users %}
+    <tr>
+      <td class="pnl-user">{{ u.username }}</td>
+      <td class="pnl-dim">{{ u.date_joined|date:"Y/m/d" }}</td>
+      <td>{% if u.is_approved %}<span class="badge badge--exam" data-l="stApproved">تایید</span>{% else %}<span class="badge badge--today" data-l="stWaiting">در انتظار</span>{% endif %}
+          {% if u.is_staff %}<span class="badge" data-l="stAdmin">ادمین</span>{% endif %}
+          {% if not u.is_active %}<span class="badge badge--over" data-l="stInactive">غیرفعال</span>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </table></div>
+</div>
+{% endblock %}

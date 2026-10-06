@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}whoami · Aegis Planner{% endblock %}
+{% block body_class %}term-page{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/whoami.css' %}">
+<script defer src="{% static 'js/whoami.js' %}"></script>{% endblock %}
+
+{% block body %}
+{% comment %}
+  v3.4.2 — the heart in the landing footer used to open a "team" page.
+  Now it opens this: a computer terminal, one command, one name, in green.
+  Nothing else. The whole page is one <main> so a screen reader gets the
+  answer as plain text without waiting for the typing animation.
+{% endcomment %}
+<main class="tp">
+  <div class="tp__screen">
+    <div class="tp__bar" aria-hidden="true">
+      <span class="tp__dot tp__dot--r"></span>
+      <span class="tp__dot tp__dot--y"></span>
+      <span class="tp__dot tp__dot--g"></span>
+      <span class="tp__title">bash — 80×24</span>
+    </div>
+    <pre class="tp__out" id="tp-out" aria-live="polite">$ whoami
+Sepehr</pre>
+  </div>
+  <a class="tp__back" href="{% url 'core:landing' %}" aria-label="بازگشت">‹</a>
+</main>
+{% endblock %}

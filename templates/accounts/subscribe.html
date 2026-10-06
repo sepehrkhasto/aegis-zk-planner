@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}اشتراک — Aegis Planner{% endblock %}
+
+{% block body_class %}sub-page{% endblock %}
+
+{% block head %}<link rel="stylesheet" href="{% static 'css/subscribe.css' %}">{% endblock %}
+
+{% block body %}
+<div class="sub-wrap">
+  {# the beacon that records which plan was reached for needs a token #}
+  <form hidden>{% csrf_token %}</form>
+
+  {# ---- header ------------------------------------------------------ #}
+  <header class="sub-head">
+    <a class="sub-back" href="{% url 'vault:app' %}" data-l-aria="backToApp" aria-label="بازگشت به برنامه">
+      <span aria-hidden="true">&rsaquo;</span>
+      <span data-l="back">بازگشت</span>
+    </a>
+    <h1 class="sub-title" data-l="hTitle">اشتراک ایجیس</h1>
+    {# The honest framing: there are no tiers. One product, choose a length. #}
+    <p class="sub-lede" data-l="lede">
+      یک محصول کامل، بدون نسخه‌ی ناقص. فقط انتخاب می‌کنی چند وقت.
+    </p>
+  </header>
+
+  {# ---- current status ---------------------------------------------- #}
+  {% if read_only %}
+  <div class="sub-status sub-status--warn" role="status">
+    <div class="sub-status__t" data-l="stExpiredT">اشتراکت تمام شده</div>
+    <div class="sub-status__s" data-l="stExpiredS">
+      همه‌ی داده‌هایت سالم و در دسترس است و می‌توانی خروجی بگیری؛ ویرایش با تمدید برمی‌گردد.
+    </div>
+  </div>
+  {% elif premium_active %}
+  <div class="sub-status sub-status--ok" role="status">
+    <div class="sub-status__t" data-l="stActiveT">اشتراکت فعال است</div>
+    <div class="sub-status__s">
+      {% if premium_until %}<span data-l="stActiveUntil">اعتبار تا</span> {{ premium_until }}{% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# ---- plans -------------------------------------------------------- #}
+  {% comment %} Every plan is the same product, so there is no feature list to compare.
+     The real axes are how long it lasts and what that costs per month — so
+     those are the only two numbers given weight, plus a twelve-cell track
+     that shows the span against a year. {% endcomment %}
+  <div class="sub-plans" role="radiogroup" aria-label="مدت اشتراک" data-l-aria="plansLabel">
+    {% for p in plans %}
+    <input class="sub-radio" type="radio" name="plan" id="plan-{{ p.key }}"
+           value="{{ p.key }}"
+           data-months="{{ p.months }}"
+           data-label-fa="{{ p.label_fa }}" data-label-en="{{ p.label_en }}"
+           {% if p.best %}checked{% endif %}>
+    <label class="sub-card{% if p.best %} sub-card--best{% endif %}" for="plan-{{ p.key }}">
+
+      {% if p.save_pct %}
+      <span class="sub-card__save">
+        <span data-l="saveWord">صرفه‌جویی</span>
+        <b class="js-fa" data-fa="{{ p.save_fa }}" data-en="{{ p.save_pct }}">{{ p.save_fa }}</b>٪
+      </span>
+      {% endif %}
+
+      <span class="sub-card__dur">
+        <b class="sub-card__n js-fa" data-fa="{{ p.months_fa }}" data-en="{{ p.months }}">{{ p.months_fa }}</b>
+        <span class="sub-card__unit" data-l="monthWord">ماهه</span>
+      </span>
+
+      {% comment %} the signature: twelve cells for twelve months, filled to the span
+         you are buying — the product is a planner, so the year is the ruler {% endcomment %}
+      <span class="sub-track" aria-hidden="true">
+        {% for c in "123456789012"|make_list %}<i class="sub-track__c"></i>{% endfor %}
+        <i class="sub-track__fill sub-track__fill--{{ p.key }}"></i>
+      </span>
+
+      <span class="sub-card__price">
+        <b class="js-fa" data-fa="{{ p.price_fa }}" data-en="{{ p.price_en }}">{{ p.price_fa }}</b>
+        <span class="sub-card__cur" data-l="toman">تومان</span>
+      </span>
+
+      <span class="sub-card__per">
+        <span data-l="perMonth">معادل ماهی</span>
+        <b class="js-fa" data-fa="{{ p.per_month_fa }}" data-en="{{ p.per_month_en }}">{{ p.per_month_fa }}</b>
+      </span>
+
+      <span class="sub-card__pick" aria-hidden="true">
+        <span class="sub-card__pickOn" data-l="picked">انتخاب شد</span>
+        <span class="sub-card__pickOff" data-l="pick">انتخاب</span>
+      </span>
+    </label>
+    {% endfor %}
+  </div>
+
+  {# ---- payment ------------------------------------------------------ #}
+  <section class="sub-pay">
+    <h2 class="sub-h2" data-l="hPay">روش پرداخت</h2>
+
+    <div class="sub-pay__grid">
+
+      {# gateway — deliberately shown but disabled, so people know it is coming #}
+      <div class="sub-method sub-method--soon" {% if not gateway_enabled %}aria-disabled="true"{% endif %}>
+        <div class="sub-method__top">
+          <span class="sub-method__t" data-l="mGateway">درگاه پرداخت</span>
+          <span class="sub-badge" data-l="soon">به‌زودی</span>
+        </div>
+        <p class="sub-method__s" data-l="mGatewayS">
+          پرداخت مستقیم با کارت بانکی. هنوز فعال نیست.
+        </p>
+        <button class="btn btn--ghost sub-method__go" type="button" disabled
+                data-l="mGatewayBtn">به‌زودی</button>
+      </div>
+
+      {% if telegram_id %}
+      {# telegram — the path that actually works today #}
+      <div class="sub-method sub-method--live">
+        <div class="sub-method__top">
+          <span class="sub-method__t" data-l="mTelegram">خرید از تلگرام</span>
+          <span class="sub-badge sub-badge--live" data-l="active">فعال</span>
+        </div>
+        <p class="sub-method__s">
+          <span data-l="mTelegramS">پیام بده به</span>
+          <b class="sub-tgid" dir="ltr">{{ telegram_id }}</b>
+        </p>
+        <a class="btn btn--primary sub-method__go" id="tg-go"
+           href="{{ telegram_url }}" target="_blank" rel="noopener noreferrer"
+           data-base="{{ telegram_url }}"
+           data-l="mTelegramBtn">ادامه‌ی خرید در تلگرام</a>
+      </div>
+      {% endif %}
+
+    </div>
+
+    {# on-brand closing note: what paying does and does not touch #}
+    <p class="sub-note">
+      <span data-l="noteT">پرداخت از داده‌های تو جداست.</span>
+      <span class="sub-note__s" data-l="noteS">
+        ما فقط تاریخ اشتراک حساب را تمدید می‌کنیم. کلید و محتوای ولت رمزنگاری‌شده‌ی تو
+        هیچ‌وقت به سرور نمی‌رسد — نه قبل از پرداخت، نه بعدش.
+      </span>
+    </p>
+  </section>
+
+</div>
+
+<script src="{% static 'js/subscribe.js' %}" defer></script>
+{% endblock %}

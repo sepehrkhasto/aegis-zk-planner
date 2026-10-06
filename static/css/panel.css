@@ -1,0 +1,270 @@
+/* panel.css — styles for the staff panel (external, CSP-safe) */
+
+.fb-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .fb-card { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--panel-2); }
+  .fb-card__head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .fb-del { margin-inline-start: auto; }
+  .fb-card__msg { color: var(--text); line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+
+.bc-form { display: flex; flex-direction: column; gap: 12px; max-width: min(520px, 100%); }
+  .bc-form .field { display: flex; flex-direction: column; gap: 5px; }
+  .bc-form label { font-size: .88rem; color: var(--muted); }
+  .bc-form input, .bc-form textarea, .bc-form select { background: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--text); font-family: inherit; }
+  .fb-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .fb-card { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--panel-2); }
+  .fb-card__head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .fb-card__msg { color: var(--text); line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+
+.fb-actions { margin-inline-start: auto; display: flex; gap: 6px; }
+
+/* ---- feedback + broadcast panels (moved out of inline <style> for CSP) ---- */
+.fb-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.fb-card { border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px 14px; background: var(--surface-2); }
+.fb-card__head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.fb-del { margin-inline-start: auto; display: flex; gap: 6px; }
+.fb-card__msg { color: var(--text); line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+.bc-form { display: flex; flex-direction: column; gap: 12px; max-width: min(520px, 100%); }
+.bc-form .field { display: flex; flex-direction: column; gap: 5px; }
+.bc-form label { font-size: var(--fs-1); color: var(--muted); }
+.bc-form input, .bc-form textarea, .bc-form select { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 12px; color: var(--text); font-family: inherit; }
+.pnl-ic { width: 16px; height: 16px; vertical-align: -3px; }
+
+/* v1.10 premium management */
+.pnl-search { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.pnl-search input[type="search"] { flex: 1; min-width: 180px; }
+.pnl-adjust { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.pnl-adjust input[type="number"] { width: 76px; }
+.pnl-adjust input[type="text"] { width: 150px; }
+@media (max-width: 640px) {
+  .pnl-adjust input[type="text"] { width: 100%; }
+}
+.pnl-backrow { margin-top: 16px; }
+
+/* ================================================================== *
+ * v3.4.1 — فاز ۲: پنل مدیریت به سطح محصول پرمیوم
+ * گزارش: «پنل مدیریت خیلی تغییر بصری نداشت». پنل تا حالا فقط جدول‌های
+ * لخت بود؛ این بلوک همان زبان بصری اپ (کارت، ارتفاع، رنگ معنایی) را
+ * به آن می‌آورد — بدون اینکه جدول‌ها روی گوشی بشکنند.
+ * ================================================================== */
+
+/* --- هدر: شیشه‌ای مثل تاپ‌بار اپ، به‌جای یک نوار تخت --- */
+.pnl-top {
+  background: color-mix(in srgb, var(--panel) 82%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  padding-block: 12px;
+}
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  .pnl-top { background: var(--panel); }
+}
+
+/* --- ناوبری: قرص فعال با ریلِ زیرین، مثل سایدبار اپ --- */
+.pnl-nav a {
+  position: relative; font-weight: 500;
+  transition: color .15s var(--ease), background .15s var(--ease);
+}
+.pnl-nav a.active::after {
+  content: ""; position: absolute; inset-inline: 12px; bottom: 2px; height: 2px;
+  border-radius: 2px; background: var(--accent);
+}
+.pnl-nav a:focus-visible,
+.pnl-actions .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* --- کارت‌ها: ارتفاع واقعی به‌جای قاب تخت --- */
+.pnl-main .panel {
+  border-radius: 16px;
+  box-shadow: var(--sh-1);
+  transition: box-shadow .18s var(--ease), border-color .18s var(--ease);
+}
+.pnl-main .panel:hover { box-shadow: var(--sh-2); }
+
+/* --- یادداشت zero-knowledge: از یک کادر خط‌چین خنثی به یک نشانِ
+       معنادار با آیکون قفل — این مهم‌ترین جمله‌ی صفحه است --- */
+.pnl-note {
+  display: flex; align-items: flex-start; gap: 10px;
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--ok) 30%, var(--line));
+  background: color-mix(in srgb, var(--ok) 7%, transparent);
+  color: var(--muted); line-height: 1.9;
+}
+.pnl-note::before {
+  content: ""; flex: none; width: 18px; height: 18px; margin-top: 2px;
+  background: currentColor; color: var(--ok);
+  -webkit-mask: var(--lock-mask) center / contain no-repeat;
+  mask: var(--lock-mask) center / contain no-repeat;
+}
+:root {
+  --lock-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='11' width='16' height='10' rx='2'/><path d='M8 11V7a4 4 0 0 1 8 0v4'/></svg>");
+}
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  .pnl-note { border-color: rgba(74, 217, 145, .35); background: rgba(74, 217, 145, .07); }
+}
+
+/* --- جدول‌ها: سربرگ چسبان، ردیف‌های راه‌راه، هاور خوانا --- */
+.pnl-table th {
+  position: sticky; top: 0; z-index: 1;
+  background: var(--panel-2); color: var(--muted);
+  font-weight: 600; font-size: .82rem;
+  letter-spacing: .02em; text-transform: none;
+}
+[lang="fa"] .pnl-table th { letter-spacing: 0; }
+.pnl-table tbody tr { transition: background .12s var(--ease); }
+.pnl-table tbody tr:hover { background: var(--surface-2); }
+.pnl-table td { vertical-align: middle; }
+.pnl-table td:first-child { font-weight: 600; }
+
+/* اعداد در ستون‌ها هم‌عرض بمانند تا ستون‌ها نلرزند */
+.pnl-table td, .pnl-stat b { font-variant-numeric: tabular-nums; }
+
+/* --- کارت‌های آمار: عدد بزرگ‌تر، برچسب آرام‌تر --- */
+.pnl-stat b { font-size: 1.7rem; line-height: 1.1; }
+.pnl-stat span { font-size: .82rem; color: var(--muted); }
+
+/* --- روی گوشی: جدول‌ها به‌جای فشرده‌شدن، افقی اسکرول می‌شوند و
+       سربرگ چسبان غیرفعال می‌شود (روی اسکرول افقی معنا ندارد) --- */
+@media (max-width: 700px) {
+  .pnl-table { min-width: 560px; }
+  .pnl-table th { position: static; }
+  .pnl-main { gap: 12px; }
+  .pnl-note { font-size: .82rem; }
+}
+
+/* ================================================================== *
+ * v5.0 — بازطراحی داشبورد پنل
+ *
+ * The dashboard used to open with eight equally-weighted numbers, which
+ * is the least actionable thing it could show. It now opens with whatever
+ * needs a decision — and for a product whose value is being shut by
+ * default, an open registration door is the item that must never be
+ * quietly forgotten. When nothing is pending, the strip says so plainly
+ * rather than disappearing, so "no news" is visibly good news.
+ * ================================================================== */
+
+.at-strip { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.at-item {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 13px 16px;
+  border: 1px solid var(--line);
+  border-inline-start-width: 3px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.at-item__body { flex: 1 1 260px; min-width: 0; }
+.at-item__t { font-weight: var(--fw-semibold); color: var(--text); }
+.at-item__t b { font-variant-numeric: tabular-nums; }
+.at-item__s { color: var(--muted); font-size: .85rem; margin-top: 2px; line-height: 1.55; }
+.at-item .btn, .at-item form { flex: none; }
+
+/* three levels, three temperatures — alert is reserved for the open door */
+.at-item--warn  { border-inline-start-color: var(--warn); background: var(--warning-soft); }
+.at-item--warn  .at-item__t { color: var(--warn); }
+.at-item--alert { border-inline-start-color: var(--danger); background: var(--danger-soft); }
+.at-item--alert .at-item__t { color: var(--danger); }
+.at-item--ok    { border-inline-start-color: var(--ok); }
+.at-item--ok    .at-item__t { color: var(--ok); }
+
+/* ---- registration control ---- */
+.rg-grid {
+  display: grid; gap: 12px; margin-top: 4px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.rg-card {
+  display: flex; flex-direction: column; gap: 10px;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  padding: 16px; background: var(--surface-2);
+}
+.rg-card--wide { grid-column: span 1; }
+.rg-card--on    { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+.rg-card--alert { border-color: color-mix(in srgb, var(--danger) 45%, var(--line)); }
+.rg-card__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rg-card__t { font-weight: var(--fw-bold); color: var(--text); }
+.rg-card__s { margin: 0; color: var(--muted); font-size: .85rem; line-height: 1.55; }
+
+/* a single dot carries the on/off state — no badge, no label to translate */
+.rg-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--muted); opacity: .45; flex: none;
+}
+.rg-dot--on    { background: var(--warn);   opacity: 1; }
+.rg-dot--alert { background: var(--danger); opacity: 1; }
+
+.rg-state {
+  font-size: .85rem; font-weight: var(--fw-semibold); color: var(--warn);
+  font-variant-numeric: tabular-nums;
+}
+.rg-state--alert { color: var(--danger); }
+.rg-state--off { color: var(--muted); font-weight: 500; }
+
+.rg-form { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+.rg-form--grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.rg-field { display: flex; flex-direction: column; gap: 4px; flex: 1 1 88px; min-width: 0; }
+.rg-field > span { font-size: .76rem; color: var(--muted); }
+.rg-field input {
+  width: 100%; padding: 8px 10px;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--panel); color: var(--text); font: inherit; font-size: .9rem;
+}
+.rg-field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.rg-check {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 8px;
+  font-size: .85rem; color: var(--muted); cursor: pointer;
+}
+.rg-check input { width: 17px; height: 17px; accent-color: var(--accent); }
+.rg-form__act { grid-column: 1 / -1; display: flex; gap: 8px; }
+.rg-form__act .btn { width: auto; }
+.rg-warn {
+  margin: 0; font-size: .78rem; color: var(--muted);
+  padding-top: 8px; border-top: 1px solid var(--divider);
+}
+
+/* ---- reports ---- */
+.rp-head { margin-bottom: 16px; }
+.rp-title { margin: 0 0 4px; font-size: 1.4rem; font-weight: var(--fw-bold); color: var(--text); }
+.rp-lede { margin: 0; color: var(--muted); font-size: .88rem; }
+.rp-bars { display: flex; flex-direction: column; gap: 12px; }
+.rp-bar__top { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
+.rp-bar__label { font-size: .88rem; color: var(--text); }
+.rp-bar__n { font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--text); }
+.rp-bar__track { height: 7px; border-radius: 4px; background: var(--panel-2); overflow: hidden; }
+.rp-bar__fill {
+  display: block; height: 100%; border-radius: 4px; width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+.rp-total { margin: 14px 0 0; font-size: .85rem; }
+
+@media (max-width: 640px) {
+  .rg-grid { grid-template-columns: 1fr; }
+  .at-item { padding: 12px 14px; }
+}
+
+/* ---- v5.2: backup console -------------------------------------------- *
+ * The visual weight here is deliberate. Export is a normal action; restore
+ * can destroy everything in one click, so it gets a danger frame and its own
+ * confirmation field rather than sharing a form with the safe operation. */
+.bk-warn {
+  border: 1px solid var(--warn); border-inline-start-width: 3px;
+  background: var(--warning-soft); border-radius: var(--r-md);
+  padding: 14px 16px; margin-bottom: 16px;
+}
+.bk-warn__t { font-weight: var(--fw-bold); color: var(--warn); margin-bottom: 4px; }
+.bk-warn__s { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.65; }
+
+.bk-form {
+  display: grid; gap: 10px; margin-top: 4px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.bk-form .rg-field input[type="password"],
+.bk-form .rg-field input[type="text"],
+.bk-form .rg-field input[type="file"] { width: 100%; }
+.bk-field--wide { grid-column: 1 / -1; }
+.bk-form__act { grid-column: 1 / -1; display: flex; gap: 8px; }
+.bk-form__act .btn { width: auto; }
+
+.bk-danger { border-color: color-mix(in srgb, var(--danger) 40%, var(--line)); }
+.bk-danger .panel__title { color: var(--danger); }
+.bk-danger__btn { border-color: var(--danger); color: var(--danger); }
+.bk-danger__btn:hover { background: var(--danger-soft); }
+
+@media (max-width: 640px) { .bk-form { grid-template-columns: 1fr; } }

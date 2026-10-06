@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}ثبت‌نام · Aegis Planner
+{% endblock %}
+{% block body_class %}auth{% endblock %}
+{% block head %}<script src="{% static 'js/prefs.js' %}"></script>
+<script defer src="{% static 'js/auth_i18n.js' %}"></script>{% endblock %}
+
+{% block body %}
+<main class="auth-wrap">
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span class="brand__name">Aegis Planner</span>
+    </div>
+    <h1 class="auth-title" data-l="regTitle">ثبت‌نام</h1>
+    <p class="auth-sub" data-l="regSub">برای ثبت‌نام به کد دعوت نیاز داری. حساب پس از تایید ادمین فعال می‌شود.</p>
+
+    {% include "_messages.html" %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <p class="field__hint">{{ field.help_text }}</p>
+          {% endif %}
+          {% for error in field.errors %}
+            <p class="field__error">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn--primary" data-l="regBtn">ساخت حساب</button>
+    </form>
+
+    <p class="auth-foot">
+      <span data-l="haveAccount">قبلاً ثبت‌نام کرده‌ای؟</span> <a href="{% url 'accounts:login' %}" data-l="loginLink">وارد شو</a> · <a href="{% url 'core:landing' %}" data-l="home">صفحه‌ی اصلی</a>
+    </p>
+  </div>
+</main>
+
+<script defer src="{% static 'js/pweye.js' %}"></script>
+{% endblock %}

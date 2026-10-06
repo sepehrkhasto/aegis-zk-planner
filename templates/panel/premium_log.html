@@ -1,0 +1,35 @@
+{% extends "panel/base_panel.html" %}
+{% block ptitle %}تاریخچه‌ی اشتراک{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <h2 class="panel__title"><span data-l="plTitle">تاریخچه‌ی اشتراک</span> — {{ u.username }}</h2>
+  <p class="panel__text">
+    <span data-l="plNow">وضعیت فعلی:</span>
+    {% if u.premium_active %}
+      <span data-l="plActive">فعال</span>{% if u.premium_days_left is not None %} · {{ u.premium_days_left }} <span data-l="plDaysLeft">روز مانده</span> (<span data-l="plUntil">تا</span> {{ u.premium_until|date:"Y/m/d" }}){% else %} · <span data-l="plForever">نامحدود</span>{% endif %}
+    {% else %}
+      <span data-l="plInactive">غیرفعال</span>{% if u.premium_until %} · <span data-l="plExpiredSince">منقضی از</span> {{ u.premium_until|date:"Y/m/d" }}{% endif %}
+    {% endif %}
+  </p>
+
+  {% if logs %}
+  <div class="pnl-scroll"><table class="pnl-table">
+    <tr class="pnl-head"><th data-l="plThWhen">زمان</th><th data-l="plThChange">تغییر</th><th data-l="plThAfter">اعتبار پس از تغییر</th><th data-l="plThAdmin">ادمین</th><th data-l="plThReason">دلیل</th></tr>
+    {% for l in logs %}
+    <tr>
+      <td class="pnl-dim">{{ l.created_at|date:"Y/m/d H:i" }}</td>
+      <td dir="ltr">{% if l.delta_days >= 0 %}+{% endif %}{{ l.delta_days }}</td>
+      <td class="pnl-dim">{{ l.until_after|date:"Y/m/d"|default:"—" }}</td>
+      <td class="pnl-dim">{{ l.admin.username|default:"—" }}</td>
+      <td class="pnl-dim">{{ l.reason|default:"—" }}</td>
+    </tr>
+    {% endfor %}
+  </table></div>
+  {% else %}
+  <p class="panel__text" data-l="plEmpty">هنوز تغییری ثبت نشده است.</p>
+  {% endif %}
+
+  <p class="pnl-backrow"><a class="btn btn--ghost btn--sm" href="{% url 'panel:users' %}" data-l="plBack">‹ بازگشت به کاربران</a></p>
+</div>
+{% endblock %}

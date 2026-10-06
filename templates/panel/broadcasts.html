@@ -1,0 +1,58 @@
+{% extends "panel/base_panel.html" %}
+{% block ptitle %}اعلان سراسری{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <h2 class="panel__title" data-l="hSendAll">ارسال اعلان به همه‌ی کاربران</h2>
+  <p class="pnl-dim" data-l="bcNote">این پیام در «مرکز اعلان‌ها»ی همه‌ی کاربران (زنگوله‌ی بالای صفحه) نمایش داده می‌شود.</p>
+  <form method="post" class="bc-form">
+    {% csrf_token %}
+    <div class="field">
+      <label data-l="lbTitle">عنوان</label>
+      <input type="text" name="title" maxlength="160" required>
+    </div>
+    <div class="field">
+      <label data-l="lbBody">متن (اختیاری)</label>
+      <textarea name="body" rows="3" maxlength="2000"></textarea>
+    </div>
+    <div class="field">
+      <label data-l="lbLevel">نوع</label>
+      <select name="level" class="tsel">
+        <option value="info" data-l="optInfo">اطلاع‌رسانی</option>
+        <option value="success" data-l="optSuccess">خبر خوب</option>
+        <option value="warning" data-l="optWarning">هشدار</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn--primary btn--sm" data-l="btnSendAll">ارسال به همه</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2 class="panel__title" data-l="hBroadcasts">اعلان‌های ثبت‌شده</h2>
+  {% if items %}
+  <div class="fb-list">
+    {% for b in items %}
+    <div class="fb-card">
+      <div class="fb-card__head">
+        <span class="badge {% if b.level == 'warning' %}badge--over{% elif b.level == 'success' %}badge--exam{% endif %}">{{ b.get_level_display }}</span>
+        {% if not b.is_active %}<span class="badge badge--over" data-l="stInactive">غیرفعال</span>{% endif %}
+        <span class="pnl-dim">{{ b.created_at|date:"Y/m/d H:i" }}</span>
+        <span class="fb-actions">
+          <form method="post" action="{% url 'panel:broadcast_toggle' b.pk %}">
+            {% csrf_token %}<button type="submit" class="btn btn--ghost btn--sm" data-l="{% if b.is_active %}btnDisable{% else %}btnEnable{% endif %}">{% if b.is_active %}غیرفعال{% else %}فعال{% endif %}</button>
+          </form>
+          <form method="post" action="{% url 'panel:broadcast_delete' b.pk %}">
+            {% csrf_token %}<button type="submit" class="btn btn--ghost btn--sm btn--danger" data-l="btnDelete">حذف</button>
+          </form>
+        </span>
+      </div>
+      <div class="fb-card__msg"><strong>{{ b.title }}</strong>{% if b.body %}<br>{{ b.body }}{% endif %}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="panel__text" data-l="emptyBroadcasts">هنوز اعلانی ثبت نشده است.</p>
+  {% endif %}
+</div>
+
+{% endblock %}
